@@ -1,1238 +1,2199 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>ArbiFlow Terminal 2.2</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ArbiFlow Pro Terminal</title>
 
 <style>
 :root{
-  --bg:#050907;
+  --bg:#050807;
+  --bg2:#08100d;
   --panel:#0b1210;
-  --panel2:#0f1915;
-  --line:#1d3028;
-  --text:#f5f8f6;
-  --muted:#84998f;
-  --green:#42e69a;
-  --green2:#1dbb78;
-  --red:#ff6f78;
-  --amber:#f2c45f;
-  --shadow:0 14px 40px rgba(0,0,0,.28)
+  --panel2:#0e1814;
+  --panel3:#111e19;
+  --line:#1a3027;
+  --line2:#254638;
+  --text:#f4f8f6;
+  --muted:#789087;
+  --green:#42f5a1;
+  --green2:#1fcf7d;
+  --red:#ff6571;
+  --amber:#f5c45b;
+  --blue:#65b8ff;
+  --cyan:#59e6df;
+  --purple:#a98cff;
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
-body{
+html,body{
   margin:0;
-  background:radial-gradient(circle at 15% -10%,#11271e 0,transparent 32%),var(--bg);
+  min-height:100%;
+  background:
+    radial-gradient(circle at 70% -20%,rgba(31,207,125,.12),transparent 35%),
+    #050807;
   color:var(--text);
-  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
 
-.wrap{
-  max-width:1280px;
-  margin:auto;
-  padding:24px
+button,input{
+  font:inherit;
 }
 
-.header{
+button{
+  cursor:pointer;
+}
+
+.shell{
+  display:grid;
+  grid-template-columns:230px 1fr;
+  min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+  width:230px;
+  background:#060b09;
+  border-right:1px solid var(--line);
+  padding:25px 18px;
   display:flex;
-  justify-content:space-between;
-  gap:18px;
-  align-items:center;
-  margin-bottom:18px
+  flex-direction:column;
+  z-index:20;
 }
 
-.brand{
-  font-size:30px;
-  font-weight:900;
-  letter-spacing:-1px
+.logo{
+  font-size:28px;
+  font-weight:950;
+  letter-spacing:-1.5px;
+  margin-bottom:5px;
 }
 
-.brand span{color:var(--green)}
+.logo span{
+  color:var(--green);
+}
 
-.eyebrow{
+.version{
   color:var(--muted);
-  font-size:11px;
-  letter-spacing:1.2px;
+  font-size:10px;
+  letter-spacing:1.4px;
   text-transform:uppercase;
-  margin-top:3px
+  margin-bottom:35px;
 }
 
-.status{
+.nav-label{
+  font-size:9px;
+  color:#52665e;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  margin:15px 10px 8px;
+}
+
+.nav-item{
   display:flex;
-  gap:9px;
   align-items:center;
-  flex-wrap:wrap;
-  justify-content:flex-end
+  gap:11px;
+  padding:12px 12px;
+  border-radius:10px;
+  color:#93a79f;
+  font-size:12px;
+  font-weight:750;
+  margin-bottom:3px;
 }
 
-.pill{
+.nav-item.active{
+  background:#0d1c16;
+  color:var(--green);
+  border:1px solid #183b2c;
+}
+
+.nav-icon{
+  width:9px;
+  height:9px;
+  border-radius:3px;
+  background:#31483f;
+}
+
+.active .nav-icon{
+  background:var(--green);
+  box-shadow:0 0 12px rgba(66,245,161,.45);
+}
+
+.side-bottom{
+  margin-top:auto;
+}
+
+.engine-mini{
   border:1px solid var(--line);
   background:#09110e;
-  border-radius:999px;
-  padding:8px 11px;
-  font-size:11px;
-  font-weight:800
+  border-radius:12px;
+  padding:13px;
 }
 
-.dot{
-  display:inline-block;
-  width:7px;
-  height:7px;
+.engine-mini-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:10px;
+  font-weight:900;
+}
+
+.live-dot{
+  width:8px;
+  height:8px;
   border-radius:50%;
-  margin-right:6px;
-  background:var(--muted)
+  background:#53655e;
 }
 
-.online .dot{
+.live-dot.online{
   background:var(--green);
-  box-shadow:0 0 12px rgba(66,230,154,.7)
+  box-shadow:0 0 12px var(--green);
 }
 
-.panel{
-  background:linear-gradient(180deg,rgba(15,25,21,.96),rgba(8,15,12,.96));
-  border:1px solid var(--line);
-  border-radius:17px;
-  box-shadow:var(--shadow)
-}
-
-.controls{
-  display:grid;
-  grid-template-columns:1.4fr 1fr;
-  gap:14px;
-  padding:16px;
-  margin-bottom:14px
-}
-
-.control-title{
-  font-size:11px;
+.engine-mini-sub{
+  font-size:9px;
   color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:1px;
-  margin-bottom:10px
+  margin-top:8px;
 }
 
-.capital-row,
-.scan-row{
+/* MAIN */
+
+.main{
+  grid-column:2;
+  min-width:0;
+}
+
+.topbar{
+  height:70px;
+  padding:0 25px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:rgba(5,8,7,.92);
+  position:sticky;
+  top:0;
+  z-index:15;
+  backdrop-filter:blur(14px);
+}
+
+.page-title{
+  font-size:16px;
+  font-weight:900;
+}
+
+.page-sub{
+  font-size:10px;
+  color:var(--muted);
+  margin-top:3px;
+}
+
+.top-right{
   display:flex;
   gap:8px;
-  flex-wrap:wrap;
-  align-items:center
+  align-items:center;
 }
 
-.cap{
+.status-pill{
   border:1px solid var(--line);
-  background:#0a1310;
-  color:var(--text);
-  padding:10px 12px;
-  border-radius:10px;
-  font-weight:800;
-  cursor:pointer
+  border-radius:999px;
+  padding:8px 11px;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.6px;
+  color:var(--muted);
 }
 
-.cap.active{
-  border-color:var(--green);
+.status-pill.live{
   color:var(--green);
-  background:#0b1c15
+  border-color:#20543c;
+  background:#0b1913;
 }
 
-.custom{
-  width:135px;
-  background:#07100d;
-  border:1px solid var(--line);
-  color:var(--text);
-  padding:10px;
-  border-radius:10px;
-  outline:none
+.content{
+  padding:20px 24px 45px;
+  max-width:1600px;
+  margin:auto;
 }
 
-.btn{
+/* COMMAND CENTER */
+
+.command{
+  display:grid;
+  grid-template-columns:1.45fr .8fr;
+  gap:14px;
+  margin-bottom:14px;
+}
+
+.hero{
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(120deg,#0b1712,#0a110f);
+  border:1px solid #1d3a2e;
+  border-radius:18px;
+  padding:24px;
+  min-height:220px;
+}
+
+.hero:after{
+  content:"";
+  position:absolute;
+  width:320px;
+  height:320px;
+  right:-120px;
+  top:-130px;
+  border-radius:50%;
+  background:rgba(66,245,161,.08);
+  filter:blur(4px);
+}
+
+.kicker{
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:1.8px;
+  color:var(--green);
+  font-weight:900;
+}
+
+.hero h1{
+  font-size:31px;
+  line-height:1.05;
+  margin:12px 0 8px;
+  max-width:620px;
+  letter-spacing:-1.3px;
+}
+
+.hero p{
+  max-width:650px;
+  font-size:12px;
+  line-height:1.6;
+  color:#91a59d;
+  margin:0;
+}
+
+.scan-control{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  margin-top:22px;
+  flex-wrap:wrap;
+  position:relative;
+  z-index:2;
+}
+
+.scan-button{
+  background:var(--green);
+  color:#03110a;
   border:0;
   border-radius:11px;
-  padding:12px 18px;
-  font-weight:900;
-  cursor:pointer;
-  letter-spacing:.2px
-}
-
-.btn-primary{
-  background:var(--green);
-  color:#02110a;
-  min-width:215px
-}
-
-.btn-primary:disabled{
-  opacity:.45;
-  cursor:not-allowed
-}
-
-.btn-dark{
-  background:#13221b;
-  color:var(--text);
-  border:1px solid var(--line)
-}
-
-.scan-copy{
-  color:var(--muted);
+  padding:14px 22px;
+  font-weight:950;
   font-size:12px;
-  line-height:1.5
+  min-width:235px;
+  box-shadow:0 8px 28px rgba(66,245,161,.13);
 }
 
-.progress{
-  height:7px;
-  background:#07100d;
-  border:1px solid var(--line);
+.scan-button:hover{
+  filter:brightness(1.05);
+}
+
+.scan-button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.scan-meta{
+  font-size:10px;
+  color:var(--muted);
+}
+
+.progress-wrap{
+  position:absolute;
+  left:24px;
+  right:24px;
+  bottom:20px;
+}
+
+.progress-top{
+  display:flex;
+  justify-content:space-between;
+  font-size:9px;
+  color:var(--muted);
+  margin-bottom:7px;
+}
+
+.progress-track{
+  height:6px;
   border-radius:99px;
+  background:#050a08;
   overflow:hidden;
-  margin-top:12px
+  border:1px solid #17271f;
 }
 
-.bar{
+.progress-bar{
   height:100%;
   width:0;
   background:linear-gradient(90deg,var(--green2),var(--green));
-  transition:width .35s
+  transition:width .4s ease;
 }
+
+/* CAPITAL */
+
+.capital-box{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:20px;
+}
+
+.box-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:17px;
+}
+
+.box-title strong{
+  font-size:12px;
+}
+
+.box-title span{
+  color:var(--muted);
+  font-size:9px;
+}
+
+.capital-display{
+  font-size:35px;
+  font-weight:950;
+  letter-spacing:-1.5px;
+  margin-bottom:3px;
+}
+
+.capital-sub{
+  color:var(--muted);
+  font-size:10px;
+  margin-bottom:17px;
+}
+
+.cap-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+}
+
+.cap-btn{
+  border:1px solid var(--line);
+  color:#a2b4ad;
+  background:#08100d;
+  padding:9px 5px;
+  border-radius:8px;
+  font-size:10px;
+  font-weight:850;
+}
+
+.cap-btn.active{
+  border-color:var(--green);
+  color:var(--green);
+  background:#0b1913;
+}
+
+.custom-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:7px;
+  margin-top:8px;
+}
+
+.custom-row input{
+  width:100%;
+  background:#070d0b;
+  color:white;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:10px;
+  outline:none;
+  font-size:11px;
+}
+
+.set-btn{
+  border:1px solid #25553e;
+  background:#0e241a;
+  color:var(--green);
+  border-radius:8px;
+  font-size:10px;
+  font-weight:900;
+  padding:0 14px;
+}
+
+/* METRICS */
 
 .metrics{
   display:grid;
   grid-template-columns:repeat(6,1fr);
   gap:10px;
-  margin-bottom:14px
+  margin-bottom:14px;
 }
 
-.metric{padding:15px}
+.metric{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:15px;
+}
 
-.label{
-  font-size:10px;
+.metric-label{
   color:var(--muted);
+  font-size:8px;
   text-transform:uppercase;
-  letter-spacing:.9px
+  letter-spacing:1.1px;
+  font-weight:800;
 }
 
-.value{
-  font-size:23px;
-  font-weight:900;
-  margin-top:6px;
-  letter-spacing:-.5px
+.metric-value{
+  font-size:22px;
+  font-weight:950;
+  margin-top:7px;
+  letter-spacing:-.7px;
 }
 
-.small{
-  font-size:11px;
-  color:var(--muted);
-  margin-top:4px
+.metric-sub{
+  color:#5f756c;
+  font-size:9px;
+  margin-top:4px;
 }
 
-.layout{
-  display:grid;
-  grid-template-columns:1.5fr .7fr;
-  gap:14px
+.green{
+  color:var(--green);
 }
 
-.section{padding:16px}
+.red{
+  color:var(--red);
+}
+
+/* NETWORK MATRIX */
+
+.section{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:16px;
+  margin-bottom:14px;
+}
 
 .section-head{
+  padding:15px 17px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.section-title{
+  font-size:12px;
+  font-weight:900;
+}
+
+.section-note{
+  color:var(--muted);
+  font-size:9px;
+}
+
+.network-grid{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+}
+
+.network-card{
+  padding:15px;
+  border-right:1px solid var(--line);
+  min-height:105px;
+}
+
+.network-card:last-child{
+  border-right:0;
+}
+
+.network-top{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:12px;
-  margin-bottom:12px
 }
 
-h2{
-  font-size:15px;
-  margin:0
-}
-
-.count{
+.network-name{
   font-size:11px;
-  color:var(--muted)
+  font-weight:900;
 }
 
-.opp{
+.network-light{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#30433b;
+}
+
+.network-light.live{
+  background:var(--green);
+  box-shadow:0 0 10px rgba(66,245,161,.5);
+}
+
+.network-chain{
+  color:var(--muted);
+  font-size:9px;
+  margin-top:6px;
+}
+
+.token-list{
+  color:#63776f;
+  font-size:8px;
+  line-height:1.5;
+  margin-top:11px;
+}
+
+/* WORKSPACE */
+
+.workspace{
+  display:grid;
+  grid-template-columns:1.6fr .7fr;
+  gap:14px;
+}
+
+.feed{
+  min-height:500px;
+}
+
+.feed-tabs{
+  display:flex;
+  gap:5px;
+}
+
+.tab{
+  font-size:8px;
+  padding:6px 9px;
+  border-radius:7px;
   border:1px solid var(--line);
-  background:#08110e;
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:10px
+  color:var(--muted);
 }
 
-.opp:last-child{margin-bottom:0}
+.tab.active{
+  color:var(--green);
+  border-color:#24503b;
+  background:#0b1a14;
+}
 
-.opp-top{
+.feed-body{
+  padding:14px;
+}
+
+.empty{
+  min-height:360px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:var(--muted);
+}
+
+.empty-inner{
+  max-width:390px;
+}
+
+.radar{
+  width:74px;
+  height:74px;
+  border:1px solid #214636;
+  border-radius:50%;
+  margin:0 auto 17px;
+  position:relative;
+}
+
+.radar:before,
+.radar:after{
+  content:"";
+  position:absolute;
+  border:1px solid #173529;
+  border-radius:50%;
+  inset:14px;
+}
+
+.radar:after{
+  inset:29px;
+  background:var(--green);
+  border:0;
+  box-shadow:0 0 18px rgba(66,245,161,.4);
+}
+
+.empty strong{
+  color:white;
+  display:block;
+  font-size:15px;
+  margin-bottom:7px;
+}
+
+.empty p{
+  font-size:10px;
+  line-height:1.6;
+  margin:0;
+}
+
+/* OPPORTUNITY */
+
+.opportunity{
+  border:1px solid var(--line);
+  background:#08100d;
+  border-radius:13px;
+  padding:15px;
+  margin-bottom:10px;
+}
+
+.opportunity.confirmed{
+  border-color:#285d44;
+  box-shadow:inset 3px 0 0 var(--green);
+}
+
+.opp-header{
   display:flex;
   justify-content:space-between;
-  gap:12px;
-  align-items:flex-start
+  gap:15px;
+  align-items:flex-start;
 }
 
-.network{
-  font-size:11px;
+.opp-network{
   color:var(--green);
-  font-weight:900;
+  font-size:8px;
+  font-weight:950;
   text-transform:uppercase;
-  letter-spacing:.8px
+  letter-spacing:1px;
 }
 
-.route{
-  font-size:16px;
-  font-weight:850;
+.opp-route{
+  font-size:15px;
+  font-weight:900;
   margin-top:4px;
-  word-break:break-word
 }
 
 .risk{
+  border:1px solid var(--line);
   padding:6px 9px;
   border-radius:999px;
-  font-size:10px;
-  font-weight:900;
-  white-space:nowrap;
-  border:1px solid var(--line)
+  font-size:8px;
+  font-weight:950;
 }
 
-.low{color:var(--green)}
-.medium{color:var(--amber)}
-.high{color:var(--red)}
+.risk.low{
+  color:var(--green);
+}
 
-.opp-grid{
+.risk.medium{
+  color:var(--amber);
+}
+
+.risk.high{
+  color:var(--red);
+}
+
+.opp-data{
   display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:8px;
-  margin-top:13px
+  grid-template-columns:repeat(6,1fr);
+  gap:7px;
+  margin-top:13px;
 }
 
-.datum{
-  background:#0c1713;
-  border:1px solid #16271f;
-  border-radius:10px;
-  padding:9px
+.data-box{
+  background:#0b1511;
+  border:1px solid #14251e;
+  border-radius:8px;
+  padding:9px;
 }
 
-.datum b{
-  display:block;
-  font-size:13px;
-  margin-top:3px
-}
-
-.datum span{
-  font-size:9px;
-  color:var(--muted);
+.data-label{
+  color:#60746c;
+  font-size:7px;
   text-transform:uppercase;
-  letter-spacing:.6px
+  letter-spacing:.7px;
 }
 
-.positive{color:var(--green)}
-.negative{color:var(--red)}
+.data-value{
+  font-size:11px;
+  font-weight:900;
+  margin-top:4px;
+}
 
-.opp-foot{
+.opp-footer{
   display:flex;
   justify-content:space-between;
-  gap:10px;
   align-items:center;
-  margin-top:11px
+  margin-top:11px;
+  gap:10px;
 }
 
-.quote{
-  font-size:10px;
-  color:var(--muted)
+.quote-status{
+  font-size:8px;
+  color:var(--muted);
 }
 
-.simulate{
-  padding:8px 11px;
-  font-size:11px
+.sim-btn{
+  border:1px solid #2a6549;
+  background:#0d2419;
+  color:var(--green);
+  border-radius:8px;
+  padding:8px 12px;
+  font-size:9px;
+  font-weight:950;
+}
+
+/* RIGHT COLUMN */
+
+.right-stack{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.engine-body{
+  padding:14px 16px;
 }
 
 .kv{
   display:flex;
   justify-content:space-between;
   gap:12px;
-  padding:10px 0;
-  border-bottom:1px solid var(--line);
-  font-size:12px
+  padding:9px 0;
+  border-bottom:1px solid #14251e;
+  font-size:9px;
 }
 
-.kv:last-child{border:0}
-
-.kv span:first-child{color:var(--muted)}
-
-.nets{
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
-  margin-top:10px
+.kv:last-child{
+  border:0;
 }
 
-.net{
-  font-size:10px;
-  border:1px solid var(--line);
-  border-radius:8px;
-  padding:6px 8px;
-  color:#b8c8c0
-}
-
-.empty{
-  text-align:center;
-  padding:44px 15px;
-  color:var(--muted)
-}
-
-.empty strong{
-  display:block;
-  color:var(--text);
-  font-size:18px;
-  margin-bottom:7px
-}
-
-.notice{
-  font-size:11px;
-  line-height:1.55;
+.kv span{
   color:var(--muted);
-  padding:12px;
-  border:1px solid var(--line);
-  border-radius:11px;
-  background:#08100d;
-  margin-top:12px
 }
 
-.err{color:var(--red)}
-
-@media(max-width:980px){
-  .metrics{grid-template-columns:repeat(3,1fr)}
-  .layout,.controls{grid-template-columns:1fr}
-  .opp-grid{grid-template-columns:repeat(2,1fr)}
+.kv b{
+  text-align:right;
+  max-width:60%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 
-@media(max-width:560px){
-  .wrap{padding:12px}
-  .header{align-items:flex-start}
-  .brand{font-size:26px}
-  .status{justify-content:flex-start}
-  .metrics{grid-template-columns:repeat(2,1fr)}
-  .value{font-size:20px}
-  .btn-primary{width:100%}
-  .opp-grid{grid-template-columns:1fr 1fr}
-  .controls,.section{padding:13px}
+.test-list{
+  padding:8px 15px 14px;
+}
+
+.test-row{
+  padding:10px 0;
+  border-bottom:1px solid #14251e;
+}
+
+.test-row:last-child{
+  border:0;
+}
+
+.test-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  font-size:9px;
+}
+
+.test-route{
+  font-weight:800;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.test-net{
+  font-weight:900;
+}
+
+.test-sub{
+  color:var(--muted);
+  font-size:8px;
+  margin-top:4px;
+}
+
+.activity{
+  padding:13px 15px;
+}
+
+.activity-item{
+  display:grid;
+  grid-template-columns:8px 1fr;
+  gap:9px;
+  margin-bottom:12px;
+}
+
+.activity-item:last-child{
+  margin-bottom:0;
+}
+
+.activity-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#31453c;
+  margin-top:4px;
+}
+
+.activity-dot.live{
+  background:var(--green);
+}
+
+.activity-text{
+  font-size:9px;
+  line-height:1.45;
+  color:#91a39c;
+}
+
+.activity-text b{
+  color:white;
+}
+
+.warning{
+  border:1px solid #47391c;
+  background:#171309;
+  color:#cdb87c;
+  border-radius:10px;
+  padding:11px;
+  font-size:8px;
+  line-height:1.5;
+  margin-top:12px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1200px){
+  .metrics{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  .network-grid{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  .network-card:nth-child(3){
+    border-right:0;
+  }
+
+  .network-card{
+    border-bottom:1px solid var(--line);
+  }
+
+  .opp-data{
+    grid-template-columns:repeat(3,1fr);
+  }
+}
+
+@media(max-width:900px){
+  .shell{
+    display:block;
+  }
+
+  .sidebar{
+    display:none;
+  }
+
+  .main{
+    grid-column:1;
+  }
+
+  .command,
+  .workspace{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:600px){
+  .content{
+    padding:12px;
+  }
+
+  .topbar{
+    padding:0 14px;
+  }
+
+  .metrics{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .network-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .network-card:nth-child(3){
+    border-right:1px solid var(--line);
+  }
+
+  .network-card:nth-child(even){
+    border-right:0;
+  }
+
+  .opp-data{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .hero{
+    min-height:270px;
+  }
+
+  .hero h1{
+    font-size:25px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="wrap">
+<div class="shell">
 
-<div class="header">
+<aside class="sidebar">
+
+  <div class="logo">Arbi<span>Flow</span></div>
+  <div class="version">Professional Arbitrage Terminal</div>
+
+  <div class="nav-label">Terminal</div>
+
+  <div class="nav-item active">
+    <span class="nav-icon"></span>
+    Opportunity Scanner
+  </div>
+
+  <div class="nav-item">
+    <span class="nav-icon"></span>
+    Route Intelligence
+  </div>
+
+  <div class="nav-item">
+    <span class="nav-icon"></span>
+    Paper Portfolio
+  </div>
+
+  <div class="nav-label">Monitoring</div>
+
+  <div class="nav-item">
+    <span class="nav-icon"></span>
+    Network Matrix
+  </div>
+
+  <div class="nav-item">
+    <span class="nav-icon"></span>
+    Execution History
+  </div>
+
+  <div class="side-bottom">
+
+    <div class="engine-mini">
+
+      <div class="engine-mini-top">
+        <span>ENGINE 2.2</span>
+        <span id="sideDot" class="live-dot"></span>
+      </div>
+
+      <div id="sideEngine" class="engine-mini-sub">
+        Connecting to opportunity engine...
+      </div>
+
+    </div>
+
+  </div>
+
+</aside>
+
+<main class="main">
+
+<header class="topbar">
+
   <div>
-    <div class="brand">Arbi<span>Flow</span></div>
-    <div class="eyebrow">
-      Opportunity Terminal 2.2 · Paper Trading
+    <div class="page-title">Opportunity Scanner</div>
+    <div class="page-sub">
+      Live multi-network arbitrage intelligence
     </div>
   </div>
 
-  <div class="status">
-    <div id="enginePill" class="pill">
-      <span class="dot"></span>
-      <span id="engineText">CONNECTING</span>
+  <div class="top-right">
+
+    <div id="modePill" class="status-pill">
+      PAPER MODE
     </div>
 
-    <div class="pill" id="phasePill">IDLE</div>
-  </div>
-</div>
-
-<div class="panel controls">
-
-  <div>
-    <div class="control-title">Paper Capital</div>
-
-    <div class="capital-row">
-      <button class="cap active" data-cap="500">$500</button>
-      <button class="cap" data-cap="1000">$1,000</button>
-      <button class="cap" data-cap="2500">$2,500</button>
-      <button class="cap" data-cap="5000">$5,000</button>
-      <button class="cap" data-cap="10000">$10,000</button>
-
-      <input
-        id="customCapital"
-        class="custom"
-        type="number"
-        min="10"
-        max="1000000"
-        placeholder="Custom amount"
-      >
-
-      <button id="setCustom" class="cap">SET</button>
+    <div id="enginePill" class="status-pill">
+      CONNECTING
     </div>
+
   </div>
 
-  <div>
-    <div class="control-title">Opportunity Scanner</div>
+</header>
 
-    <div class="scan-row">
-      <button id="scanBtn" class="btn btn-primary">
+<div class="content">
+
+<section class="command">
+
+  <div class="hero">
+
+    <div class="kicker">
+      Live Market Intelligence
+    </div>
+
+    <h1>
+      Scan multiple networks for
+      pricing inefficiencies.
+    </h1>
+
+    <p>
+      ArbiFlow evaluates live market routes, position sizes,
+      network costs and fresh re-quotes before a route can
+      qualify for paper simulation.
+    </p>
+
+    <div class="scan-control">
+
+      <button id="scanButton" class="scan-button">
         SCAN FOR OPPORTUNITIES
       </button>
 
-      <div class="scan-copy">
-        <span id="scanStatus">
-          Ready for a live market scan.
-        </span>
+      <div id="scanMeta" class="scan-meta">
+        Engine ready. Start a live market scan.
+      </div>
+
+    </div>
+
+    <div class="progress-wrap">
+
+      <div class="progress-top">
+        <span id="scanPhase">IDLE</span>
+        <span id="scanProgressText">0%</span>
+      </div>
+
+      <div class="progress-track">
+        <div id="scanProgress" class="progress-bar"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="capital-box">
+
+    <div class="box-title">
+      <strong>Paper Capital</strong>
+      <span>SIMULATION BALANCE</span>
+    </div>
+
+    <div id="capitalDisplay" class="capital-display">
+      $500.00
+    </div>
+
+    <div class="capital-sub">
+      Select the amount available to the sizing engine.
+    </div>
+
+    <div class="cap-grid">
+
+      <button class="cap-btn active" data-cap="500">
+        $500
+      </button>
+
+      <button class="cap-btn" data-cap="1000">
+        $1K
+      </button>
+
+      <button class="cap-btn" data-cap="2500">
+        $2.5K
+      </button>
+
+      <button class="cap-btn" data-cap="5000">
+        $5K
+      </button>
+
+      <button class="cap-btn" data-cap="10000">
+        $10K
+      </button>
+
+      <button class="cap-btn" data-cap="25000">
+        $25K
+      </button>
+
+    </div>
+
+    <div class="custom-row">
+
+      <input
+        id="customCapital"
+        type="number"
+        min="10"
+        max="1000000"
+        placeholder="Custom capital"
+      >
+
+      <button id="setCapital" class="set-btn">
+        SET
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+<section class="metrics">
+
+  <div class="metric">
+    <div class="metric-label">Paper Balance</div>
+    <div id="balance" class="metric-value">$500.00</div>
+    <div class="metric-sub">Current virtual equity</div>
+  </div>
+
+  <div class="metric">
+    <div class="metric-label">Realized P&amp;L</div>
+    <div id="pnl" class="metric-value">$0.00</div>
+    <div class="metric-sub">Completed simulations</div>
+  </div>
+
+  <div class="metric">
+    <div class="metric-label">Routes Tested</div>
+    <div id="routesTested" class="metric-value">0</div>
+    <div id="routesPlanned" class="metric-sub">0 planned</div>
+  </div>
+
+  <div class="metric">
+    <div class="metric-label">Candidates</div>
+    <div id="candidateCount" class="metric-value">0</div>
+    <div class="metric-sub">Positive initial routes</div>
+  </div>
+
+  <div class="metric">
+    <div class="metric-label">Confirmed</div>
+    <div id="confirmedCount" class="metric-value">0</div>
+    <div class="metric-sub">Fresh re-quote passed</div>
+  </div>
+
+  <div class="metric">
+    <div class="metric-label">Paper Trades</div>
+    <div id="paperTrades" class="metric-value">0</div>
+    <div class="metric-sub">Simulated executions</div>
+  </div>
+
+</section>
+
+<section class="section">
+
+  <div class="section-head">
+
+    <div>
+      <div class="section-title">Network Matrix</div>
+      <div class="section-note">
+        Networks available to Engine 2.2
       </div>
     </div>
 
-    <div class="progress">
-      <div id="progressBar" class="bar"></div>
+    <div id="networkStatus" class="section-note">
+      Waiting for engine...
     </div>
+
   </div>
 
-</div>
+  <div id="networkGrid" class="network-grid"></div>
 
-<div class="metrics">
+</section>
 
-  <div class="panel metric">
-    <div class="label">Paper Balance</div>
-    <div class="value" id="balance">$500.00</div>
-    <div class="small">Virtual capital</div>
-  </div>
+<div class="workspace">
 
-  <div class="panel metric">
-    <div class="label">Realized P&amp;L</div>
-    <div class="value" id="pnl">$0.00</div>
-    <div class="small">Paper results</div>
-  </div>
-
-  <div class="panel metric">
-    <div class="label">Routes Tested</div>
-    <div class="value" id="tested">0</div>
-    <div class="small" id="planned">0 planned</div>
-  </div>
-
-  <div class="panel metric">
-    <div class="label">Candidates</div>
-    <div class="value" id="candidates">0</div>
-    <div class="small">Positive after estimates</div>
-  </div>
-
-  <div class="panel metric">
-    <div class="label">Confirmed</div>
-    <div class="value" id="confirmed">0</div>
-    <div class="small">Fresh re-quote passed</div>
-  </div>
-
-  <div class="panel metric">
-    <div class="label">Paper Trades</div>
-    <div class="value" id="trades">0</div>
-    <div class="small">Simulated only</div>
-  </div>
-
-</div>
-
-<div class="layout">
-
-<div class="panel section">
+<section class="section feed">
 
   <div class="section-head">
-    <h2>Opportunity Feed</h2>
-    <div class="count" id="feedCount">
-      0 confirmed opportunities
+
+    <div>
+      <div class="section-title">Opportunity Intelligence</div>
+      <div id="feedSub" class="section-note">
+        Waiting for first scan
+      </div>
     </div>
+
+    <div class="feed-tabs">
+      <div class="tab active">CONFIRMED</div>
+      <div class="tab">LIVE ROUTES</div>
+      <div class="tab">REJECTED</div>
+    </div>
+
   </div>
 
-  <div id="feed">
+  <div id="opportunityFeed" class="feed-body">
+
     <div class="empty">
-      <strong>No confirmed opportunities yet</strong>
-      Choose your paper capital and press
-      <b>SCAN FOR OPPORTUNITIES</b>.
+
+      <div class="empty-inner">
+
+        <div class="radar"></div>
+
+        <strong>
+          Market scanner standing by
+        </strong>
+
+        <p>
+          Select your paper capital and start a live scan.
+          ArbiFlow will test round-trip and triangular routes
+          across the connected networks.
+        </p>
+
+      </div>
+
     </div>
+
   </div>
 
-</div>
+</section>
 
-<div>
+<div class="right-stack">
 
-<div class="panel section">
+<section class="section">
 
   <div class="section-head">
-    <h2>Engine</h2>
-    <div class="count">LIVE DATA</div>
+    <div class="section-title">Engine Intelligence</div>
+    <div class="section-note">LIVE</div>
   </div>
 
-  <div class="kv">
-    <span>Version</span>
-    <b id="version">—</b>
+  <div class="engine-body">
+
+    <div class="kv">
+      <span>Engine Version</span>
+      <b id="engineVersion">—</b>
+    </div>
+
+    <div class="kv">
+      <span>Provider</span>
+      <b id="provider">—</b>
+    </div>
+
+    <div class="kv">
+      <span>Current Phase</span>
+      <b id="currentPhase">IDLE</b>
+    </div>
+
+    <div class="kv">
+      <span>Current Network</span>
+      <b id="currentNetwork">—</b>
+    </div>
+
+    <div class="kv">
+      <span>Current Route</span>
+      <b id="currentRoute">—</b>
+    </div>
+
+    <div class="kv">
+      <span>Last Live Quote</span>
+      <b id="lastQuote">—</b>
+    </div>
+
+    <div class="kv">
+      <span>Rate Limited</span>
+      <b id="rateLimited">NO</b>
+    </div>
+
+    <div class="warning">
+      Paper mode does not move real funds. Confirmed paper
+      opportunities are live-data simulations and are not
+      guaranteed real-world profits.
+    </div>
+
   </div>
 
-  <div class="kv">
-    <span>Provider</span>
-    <b id="provider">—</b>
-  </div>
+</section>
 
-  <div class="kv">
-    <span>Scan phase</span>
-    <b id="phase">IDLE</b>
-  </div>
-
-  <div class="kv">
-    <span>Progress</span>
-    <b id="progressText">0%</b>
-  </div>
-
-  <div class="kv">
-    <span>Current network</span>
-    <b id="currentNetwork">—</b>
-  </div>
-
-  <div class="kv">
-    <span>Current route</span>
-    <b id="currentRoute">—</b>
-  </div>
-
-  <div class="kv">
-    <span>Last live quote</span>
-    <b id="lastQuote">—</b>
-  </div>
-
-  <div class="control-title" style="margin-top:14px">
-    Networks
-  </div>
-
-  <div id="networks" class="nets"></div>
-
-  <div class="notice">
-    Paper mode uses live quote data but does not submit blockchain
-    transactions. A confirmed paper opportunity is not the same as
-    a guaranteed or real-world executable profit.
-  </div>
-
-</div>
-
-<div class="panel section" style="margin-top:14px">
+<section class="section">
 
   <div class="section-head">
-    <h2>Best Current Tests</h2>
-    <div class="count">TOP 5</div>
+    <div class="section-title">Top Route Tests</div>
+    <div class="section-note">RANKED BY NET</div>
   </div>
 
-  <div id="best">
-    <div class="empty" style="padding:22px 8px">
-      No scan results yet.
+  <div id="testList" class="test-list">
+
+    <div class="empty" style="min-height:170px">
+      <div class="empty-inner">
+        <strong>No route data yet</strong>
+        <p>Start a scan to populate live route tests.</p>
+      </div>
     </div>
+
   </div>
 
+</section>
+
+<section class="section">
+
+  <div class="section-head">
+    <div class="section-title">Scanner Activity</div>
+    <div class="section-note">REAL TIME</div>
+  </div>
+
+  <div id="activity" class="activity">
+
+    <div class="activity-item">
+      <div class="activity-dot"></div>
+      <div class="activity-text">
+        <b>Terminal initialized.</b><br>
+        Waiting for live market scan.
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
 </div>
 
 </div>
+
 </div>
+
+</main>
 
 </div>
 
 <script>
 
 const API =
-  'https://arbiflow-engine-v2.onrender.com';
+  "https://arbiflow-engine-v2.onrender.com";
 
-const $ = id =>
-  document.getElementById(id);
+const $ =
+  id => document.getElementById(id);
 
-let polling = null;
-let lastRunning = false;
-
-const money = n =>
+const money =
+  value =>
   new Intl.NumberFormat(
-    'en-US',
+    "en-US",
     {
-      style:'currency',
-      currency:'USD',
+      style:"currency",
+      currency:"USD",
       minimumFractionDigits:2,
       maximumFractionDigits:4
     }
-  ).format(Number(n || 0));
+  ).format(Number(value || 0));
 
-const num = n =>
-  new Intl.NumberFormat('en-US')
-    .format(Number(n || 0));
+const number =
+  value =>
+  new Intl.NumberFormat("en-US")
+  .format(Number(value || 0));
 
-const age = s => {
+function timeAgo(value){
 
-  if(!s) return '—';
+  if(!value){
+    return "—";
+  }
 
-  const d =
+  const diff =
     Math.max(
       0,
       Date.now() -
-      new Date(s).getTime()
+      new Date(value).getTime()
     );
 
-  if(d < 60000)
-    return Math.floor(d / 1000) + 's ago';
+  if(diff < 60000){
+    return Math.floor(diff / 1000) + " sec ago";
+  }
 
-  if(d < 3600000)
-    return Math.floor(d / 60000) + 'm ago';
+  if(diff < 3600000){
+    return Math.floor(diff / 60000) + " min ago";
+  }
 
-  return new Date(s).toLocaleString();
-};
+  return new Date(value).toLocaleString();
+}
 
-async function request(path,opt={}) {
+async function api(path,options={}){
 
-  const r =
+  const response =
     await fetch(
       API + path,
       {
+        ...options,
         headers:{
-          'Content-Type':'application/json',
-          ...(opt.headers || {})
-        },
-        ...opt
+          "Content-Type":"application/json",
+          ...(options.headers || {})
+        }
       }
     );
 
-  let j = {};
+  let data = {};
 
-  try {
-    j = await r.json();
-  } catch {}
+  try{
+    data = await response.json();
+  }catch{}
 
-  if(!r.ok)
+  if(!response.ok){
+
     throw new Error(
-      j.message ||
-      ('Request failed: ' + r.status)
+      data.message ||
+      "Request failed with status " +
+      response.status
+    );
+  }
+
+  return data;
+}
+
+function setEngineOnline(online){
+
+  $("enginePill").textContent =
+    online
+    ? "ENGINE ONLINE"
+    : "ENGINE OFFLINE";
+
+  $("enginePill")
+    .classList.toggle(
+      "live",
+      online
     );
 
-  return j;
+  $("sideDot")
+    .classList.toggle(
+      "online",
+      online
+    );
+
+  $("sideEngine").textContent =
+    online
+    ? "Live connection established"
+    : "Engine connection unavailable";
 }
 
-function riskClass(v) {
-  return String(v || '').toLowerCase();
+function renderNetworks(networks=[]){
+
+  $("networkStatus").textContent =
+    networks.length +
+    " NETWORKS CONNECTED";
+
+  $("networkGrid").innerHTML =
+    networks.map(
+      network => {
+
+        const tokens =
+          (network.tokens || [])
+          .join(" · ");
+
+        return `
+          <div class="network-card">
+
+            <div class="network-top">
+
+              <div class="network-name">
+                ${network.name}
+              </div>
+
+              <div class="network-light live"></div>
+
+            </div>
+
+            <div class="network-chain">
+              Chain ID ${network.chainId}
+            </div>
+
+            <div class="token-list">
+              ${tokens}
+            </div>
+
+          </div>
+        `;
+      }
+    ).join("");
 }
 
-function card(x) {
+function riskClass(level){
+
+  const value =
+    String(level || "")
+    .toLowerCase();
+
+  if(
+    value === "low" ||
+    value === "medium" ||
+    value === "high"
+  ){
+    return value;
+  }
+
+  return "";
+}
+
+function opportunityCard(item){
+
+  const net =
+    Number(item.estimatedNet || 0);
+
+  const roi =
+    Number(item.roi || 0);
 
   return `
-  <div class="opp">
+    <div class="opportunity confirmed">
 
-    <div class="opp-top">
+      <div class="opp-header">
 
-      <div>
-        <div class="network">
-          ${x.network || '—'} ·
-          ${x.routeType || 'ROUTE'}
+        <div>
+
+          <div class="opp-network">
+            ${item.network || "—"}
+            ·
+            ${item.routeType || "ROUTE"}
+          </div>
+
+          <div class="opp-route">
+            ${item.route || "—"}
+          </div>
+
         </div>
 
-        <div class="route">
-          ${x.route || '—'}
+        <div class="risk ${riskClass(item.riskLevel)}">
+          ${item.riskLevel || "—"} RISK
+          ·
+          ${item.riskScore ?? "—"}
         </div>
-      </div>
-
-      <div class="risk ${riskClass(x.riskLevel)}">
-        ${x.riskLevel || '—'} RISK ·
-        ${x.riskScore ?? '—'}
-      </div>
-
-    </div>
-
-    <div class="opp-grid">
-
-      <div class="datum">
-        <span>Trade Size</span>
-        <b>${money(x.tradeSize)}</b>
-      </div>
-
-      <div class="datum">
-        <span>Expected Value</span>
-        <b>${money(x.expectedFinalValue)}</b>
-      </div>
-
-      <div class="datum">
-        <span>Gas / Network</span>
-        <b>${money(x.estimatedGasUsd)}</b>
-      </div>
-
-      <div class="datum">
-        <span>Estimated Net</span>
-        <b class="${
-          Number(x.estimatedNet) >= 0
-            ? 'positive'
-            : 'negative'
-        }">
-          ${money(x.estimatedNet)}
-        </b>
-      </div>
-
-      <div class="datum">
-        <span>ROI</span>
-
-        <b class="${
-          Number(x.roi) >= 0
-            ? 'positive'
-            : 'negative'
-        }">
-
-          ${Number(x.roi || 0).toFixed(4)}%
-
-        </b>
-      </div>
-
-    </div>
-
-    <div class="opp-foot">
-
-      <div class="quote">
-
-        ${
-          x.status ||
-          x.quoteStatus ||
-          'QUOTED'
-        }
-
-        · quote
-
-        ${
-          age(
-            x.confirmedAt ||
-            x.testedAt
-          )
-        }
 
       </div>
 
-      ${
-        x.status === 'CONFIRMED'
-        ?
-        `
+      <div class="opp-data">
+
+        <div class="data-box">
+          <div class="data-label">Trade Size</div>
+          <div class="data-value">
+            ${money(item.tradeSize)}
+          </div>
+        </div>
+
+        <div class="data-box">
+          <div class="data-label">Expected Value</div>
+          <div class="data-value">
+            ${money(item.expectedFinalValue)}
+          </div>
+        </div>
+
+        <div class="data-box">
+          <div class="data-label">Gross Profit</div>
+          <div class="data-value ${Number(item.grossProfit) >= 0 ? "green" : "red"}">
+            ${money(item.grossProfit)}
+          </div>
+        </div>
+
+        <div class="data-box">
+          <div class="data-label">Network Cost</div>
+          <div class="data-value">
+            ${money(item.estimatedGasUsd)}
+          </div>
+        </div>
+
+        <div class="data-box">
+          <div class="data-label">Estimated Net</div>
+          <div class="data-value ${net >= 0 ? "green" : "red"}">
+            ${money(net)}
+          </div>
+        </div>
+
+        <div class="data-box">
+          <div class="data-label">ROI</div>
+          <div class="data-value ${roi >= 0 ? "green" : "red"}">
+            ${roi.toFixed(4)}%
+          </div>
+        </div>
+
+      </div>
+
+      <div class="opp-footer">
+
+        <div class="quote-status">
+          ${item.status || "CONFIRMED"}
+          ·
+          Fresh quote
+          ${timeAgo(item.confirmedAt || item.testedAt)}
+        </div>
+
         <button
-          class="btn btn-dark simulate"
-          onclick="simulate('${x.id}')"
+          class="sim-btn"
+          onclick="simulateTrade('${item.id}')"
         >
           SIMULATE TRADE
         </button>
-        `
-        :
-        ''
+
+      </div>
+
+    </div>
+  `;
+}
+
+function renderFeed(data){
+
+  const confirmed =
+    data.confirmed || [];
+
+  $("confirmedCount").textContent =
+    confirmed.length;
+
+  $("feedSub").textContent =
+    confirmed.length
+    ? confirmed.length +
+      " CONFIRMED PAPER OPPORTUNITIES"
+    : data.lastScanCompleted
+      ? "SCAN COMPLETE · NO CONFIRMED ROUTES"
+      : "WAITING FOR FIRST SCAN";
+
+  if(confirmed.length){
+
+    $("opportunityFeed").innerHTML =
+      confirmed
+      .map(opportunityCard)
+      .join("");
+
+    return;
+  }
+
+  const title =
+    data.running
+    ? "Live market scan in progress"
+    : data.lastScanCompleted
+      ? "No route passed confirmation"
+      : "Market scanner standing by";
+
+  const text =
+    data.running
+    ? "ArbiFlow is evaluating live routes and position sizes. Results will populate as the engine completes the scan."
+    : data.lastScanCompleted
+      ? "The latest scan did not find a route that passed the fresh re-quote and profitability threshold. No opportunity was fabricated."
+      : "Select your paper capital and start a live scan. ArbiFlow will test round-trip and triangular routes across the connected networks.";
+
+  $("opportunityFeed").innerHTML =
+    `
+      <div class="empty">
+
+        <div class="empty-inner">
+
+          <div class="radar"></div>
+
+          <strong>
+            ${title}
+          </strong>
+
+          <p>
+            ${text}
+          </p>
+
+        </div>
+
+      </div>
+    `;
+}
+
+function renderTests(tests=[]){
+
+  const top =
+    tests.slice(0,7);
+
+  if(!top.length){
+
+    $("testList").innerHTML =
+      `
+        <div class="empty" style="min-height:170px">
+          <div class="empty-inner">
+            <strong>No route data yet</strong>
+            <p>Start a scan to populate live route tests.</p>
+          </div>
+        </div>
+      `;
+
+    return;
+  }
+
+  $("testList").innerHTML =
+    top.map(
+      item => {
+
+        const net =
+          Number(item.estimatedNet || 0);
+
+        return `
+          <div class="test-row">
+
+            <div class="test-top">
+
+              <div class="test-route">
+                ${item.network} · ${item.route}
+              </div>
+
+              <div class="test-net ${net >= 0 ? "green" : "red"}">
+                ${money(net)}
+              </div>
+
+            </div>
+
+            <div class="test-sub">
+              ${money(item.tradeSize)}
+              trade
+              ·
+              ${Number(item.roi || 0).toFixed(4)}%
+              ROI
+              ·
+              ${item.status || "TESTED"}
+            </div>
+
+          </div>
+        `;
       }
-
-    </div>
-
-  </div>
-  `;
+    ).join("");
 }
 
-function bestRow(x) {
+function renderActivity(data){
 
-  return `
-    <div class="kv">
+  const items = [];
 
-      <span>
-        ${x.network} · ${x.route}
-      </span>
+  if(data.running){
 
-      <b class="${
-        Number(x.estimatedNet) >= 0
-          ? 'positive'
-          : 'negative'
-      }">
+    items.push(
+      `
+        <div class="activity-item">
+          <div class="activity-dot live"></div>
+          <div class="activity-text">
+            <b>Scanner active.</b><br>
+            ${data.scanPhase || "SCANNING"}
+            on
+            ${data.currentNetwork || "market routes"}.
+          </div>
+        </div>
+      `
+    );
 
-        ${money(x.estimatedNet)}
+    if(data.currentRoute){
 
-      </b>
+      items.push(
+        `
+          <div class="activity-item">
+            <div class="activity-dot live"></div>
+            <div class="activity-text">
+              <b>Testing route.</b><br>
+              ${data.currentRoute}
+            </div>
+          </div>
+        `
+      );
+    }
+  }
 
-    </div>
-  `;
+  if(data.lastSuccessfulQuote){
+
+    items.push(
+      `
+        <div class="activity-item">
+          <div class="activity-dot live"></div>
+          <div class="activity-text">
+            <b>Live quote received.</b><br>
+            ${timeAgo(data.lastSuccessfulQuote)}
+          </div>
+        </div>
+      `
+    );
+  }
+
+  if(data.lastScanCompleted){
+
+    items.push(
+      `
+        <div class="activity-item">
+          <div class="activity-dot"></div>
+          <div class="activity-text">
+            <b>Previous scan completed.</b><br>
+            ${timeAgo(data.lastScanCompleted)}
+          </div>
+        </div>
+      `
+    );
+  }
+
+  if(!items.length){
+
+    items.push(
+      `
+        <div class="activity-item">
+          <div class="activity-dot"></div>
+          <div class="activity-text">
+            <b>Terminal initialized.</b><br>
+            Waiting for live market scan.
+          </div>
+        </div>
+      `
+    );
+  }
+
+  $("activity").innerHTML =
+    items.join("");
 }
 
-async function loadStatus() {
+async function loadStatus(){
 
-  try {
+  try{
 
-    const s =
-      await request('/api/status');
+    const status =
+      await api("/api/status");
 
-    $('enginePill')
-      .classList.add('online');
+    setEngineOnline(true);
 
-    $('engineText').textContent =
-      'ENGINE ONLINE';
+    $("engineVersion").textContent =
+      status.version || "—";
 
-    $('version').textContent =
-      s.version || '—';
+    $("provider").textContent =
+      status.provider || "—";
 
-    $('provider').textContent =
-      s.provider || '—';
+    $("currentPhase").textContent =
+      status.scanPhase || "IDLE";
 
-    $('phase').textContent =
-      s.scanPhase || 'IDLE';
+    $("currentNetwork").textContent =
+      status.currentNetwork || "—";
 
-    $('phasePill').textContent =
-      s.scanPhase || 'IDLE';
+    $("currentRoute").textContent =
+      status.currentRoute || "—";
 
-    $('currentNetwork').textContent =
-      s.currentNetwork || '—';
+    $("lastQuote").textContent =
+      timeAgo(status.lastSuccessfulQuote);
 
-    $('currentRoute').textContent =
-      s.currentRoute || '—';
+    $("rateLimited").textContent =
+      status.rateLimited
+      ? "YES"
+      : "NO";
 
-    $('lastQuote').textContent =
-      age(s.lastSuccessfulQuote);
+    renderNetworks(
+      status.networks || []
+    );
 
-    $('networks').innerHTML =
-      (s.networks || [])
-      .map(
-        n =>
-        `<span class="net">${n.name}</span>`
-      )
-      .join('');
+  }catch(error){
 
-  } catch(e) {
-
-    $('enginePill')
-      .classList.remove('online');
-
-    $('engineText').textContent =
-      'ENGINE UNAVAILABLE';
+    setEngineOnline(false);
   }
 }
 
-async function refresh() {
+async function refresh(){
 
-  try {
+  try{
 
-    const [o,a] =
+    const [
+      opportunities,
+      account
+    ] =
       await Promise.all([
-        request('/api/opportunities'),
-        request('/api/account')
+        api("/api/opportunities"),
+        api("/api/account")
       ]);
 
-    $('balance').textContent =
-      money(a.balance);
+    $("balance").textContent =
+      money(account.balance);
 
-    $('pnl').textContent =
-      money(a.realizedPnL);
+    $("capitalDisplay").textContent =
+      money(account.balance);
 
-    $('pnl').className =
-      'value ' +
+    $("pnl").textContent =
+      money(account.realizedPnL);
+
+    $("pnl").className =
+      "metric-value " +
       (
-        Number(a.realizedPnL) >= 0
-          ? 'positive'
-          : 'negative'
+        Number(account.realizedPnL) >= 0
+        ? "green"
+        : "red"
       );
 
-    $('trades').textContent =
-      num(a.simulatedTrades);
+    $("routesTested").textContent =
+      number(opportunities.testsCompleted);
 
-    $('tested').textContent =
-      num(o.testsCompleted);
+    $("routesPlanned").textContent =
+      number(opportunities.testsPlanned) +
+      " planned";
 
-    $('planned').textContent =
-      num(o.testsPlanned) +
-      ' planned';
+    $("candidateCount").textContent =
+      number(opportunities.candidatesFound);
 
-    $('candidates').textContent =
-      num(o.candidatesFound);
+    $("confirmedCount").textContent =
+      number(opportunities.confirmedFound);
 
-    $('confirmed').textContent =
-      num(o.confirmedFound);
+    $("paperTrades").textContent =
+      number(account.simulatedTrades);
 
-    $('phase').textContent =
-      o.scanPhase || 'IDLE';
+    $("scanPhase").textContent =
+      opportunities.scanPhase || "IDLE";
 
-    $('phasePill').textContent =
-      o.scanPhase || 'IDLE';
+    $("currentPhase").textContent =
+      opportunities.scanPhase || "IDLE";
 
-    $('progressText').textContent =
-      Number(
-        o.progressPercent || 0
-      ).toFixed(0) + '%';
+    $("currentNetwork").textContent =
+      opportunities.currentNetwork || "—";
 
-    $('progressBar').style.width =
+    $("currentRoute").textContent =
+      opportunities.currentRoute || "—";
+
+    $("lastQuote").textContent =
+      timeAgo(opportunities.lastSuccessfulQuote);
+
+    $("rateLimited").textContent =
+      opportunities.rateLimited
+      ? "YES"
+      : "NO";
+
+    const progress =
       Math.max(
         0,
         Math.min(
           100,
           Number(
-            o.progressPercent || 0
+            opportunities.progressPercent || 0
           )
         )
-      ) + '%';
-
-    $('currentNetwork').textContent =
-      o.currentNetwork || '—';
-
-    $('currentRoute').textContent =
-      o.currentRoute || '—';
-
-    $('lastQuote').textContent =
-      age(o.lastSuccessfulQuote);
-
-    $('scanBtn').disabled =
-      !!o.running;
-
-    $('scanBtn').textContent =
-      o.running
-      ? 'SCANNING LIVE MARKETS…'
-      : 'SCAN FOR OPPORTUNITIES';
-
-    $('scanStatus').textContent =
-      o.running
-      ?
-      `${
-        o.scanPhase || 'SCANNING'
-      } · ${
-        o.testsCompleted || 0
-      } of ${
-        o.testsPlanned || 0
-      } tests completed`
-      :
-      (
-        o.lastScanCompleted
-        ?
-        'Last scan completed ' +
-        age(o.lastScanCompleted)
-        :
-        'Ready for a live market scan.'
       );
 
-    const list =
-      (o.confirmed || []);
+    $("scanProgress").style.width =
+      progress + "%";
 
-    $('feedCount').textContent =
-      list.length +
-      ' confirmed opportunit' +
-      (
-        list.length === 1
-          ? 'y'
-          : 'ies'
-      );
+    $("scanProgressText").textContent =
+      progress.toFixed(0) + "%";
 
-    $('feed').innerHTML =
-      list.length
-      ?
-      list.map(card).join('')
-      :
-      `
-      <div class="empty">
+    $("scanButton").disabled =
+      Boolean(opportunities.running);
 
-        <strong>
-          ${
-            o.lastScanCompleted
-            ?
-            '0 CONFIRMED OPPORTUNITIES'
-            :
-            'No confirmed opportunities yet'
-          }
-        </strong>
+    $("scanButton").textContent =
+      opportunities.running
+      ? "SCANNING LIVE MARKETS..."
+      : "SCAN FOR OPPORTUNITIES";
 
-        ${
-          o.lastScanCompleted
-          ?
-          'The last live scan did not find a route that passed the fresh re-quote threshold. No opportunity was fabricated.'
-          :
-          'Choose your paper capital and press <b>SCAN FOR OPPORTUNITIES</b>.'
-        }
+    if(opportunities.running){
 
-      </div>
-      `;
+      $("scanMeta").textContent =
+        (
+          opportunities.testsCompleted || 0
+        ) +
+        " of " +
+        (
+          opportunities.testsPlanned || 0
+        ) +
+        " route tests completed";
 
-    const best =
-      (o.bestTests || [])
-      .slice(0,5);
+    }else if(opportunities.lastScanCompleted){
 
-    $('best').innerHTML =
-      best.length
-      ?
-      best.map(bestRow).join('')
-      :
-      `
-      <div
-        class="empty"
-        style="padding:22px 8px"
-      >
-        No scan results yet.
-      </div>
-      `;
+      $("scanMeta").textContent =
+        "Last scan completed " +
+        timeAgo(
+          opportunities.lastScanCompleted
+        );
 
-    if(
-      lastRunning &&
-      !o.running
-    )
-      await loadStatus();
+    }else{
 
-    lastRunning =
-      !!o.running;
+      $("scanMeta").textContent =
+        "Engine ready. Start a live market scan.";
+    }
 
-  } catch(e) {
+    renderFeed(opportunities);
 
-    $('scanStatus').innerHTML =
-      '<span class="err">' +
-      e.message +
-      '</span>';
+    renderTests(
+      opportunities.bestTests || []
+    );
+
+    renderActivity(opportunities);
+
+  }catch(error){
+
+    $("scanMeta").textContent =
+      "Unable to read engine data: " +
+      error.message;
   }
 }
 
-async function setCapital(amount) {
+async function startScan(){
 
-  try {
+  try{
 
-    const r =
-      await request(
-        '/api/account/capital',
-        {
-          method:'POST',
+    $("scanButton").disabled = true;
 
-          body:JSON.stringify({
-            amount:Number(amount)
-          })
-        }
-      );
+    $("scanButton").textContent =
+      "STARTING SCANNER...";
 
-    document
-      .querySelectorAll(
-        '.cap[data-cap]'
-      )
-      .forEach(
-        b =>
-        b.classList.toggle(
-          'active',
-          Number(b.dataset.cap) ===
-          Number(amount)
-        )
-      );
+    $("scanMeta").textContent =
+      "Requesting live market scan.";
 
-    $('customCapital').value = '';
-
-    await refresh();
-
-    $('scanStatus').textContent =
-      'Paper capital set to ' +
-      money(r.account.balance) +
-      '. Ready to scan.';
-
-  } catch(e) {
-
-    $('scanStatus').innerHTML =
-      '<span class="err">' +
-      e.message +
-      '</span>';
-  }
-}
-
-async function startScan() {
-
-  try {
-
-    $('scanBtn').disabled = true;
-
-    $('scanStatus').textContent =
-      'Starting live market scan…';
-
-    await request(
-      '/api/scan/start',
+    await api(
+      "/api/scan/start",
       {
-        method:'POST',
-        body:'{}'
+        method:"POST",
+        body:"{}"
       }
     );
 
     await refresh();
 
-  } catch(e) {
+  }catch(error){
 
-    $('scanBtn').disabled = false;
+    $("scanButton").disabled = false;
 
-    $('scanStatus').innerHTML =
-      '<span class="err">' +
-      e.message +
-      '</span>';
+    $("scanButton").textContent =
+      "SCAN FOR OPPORTUNITIES";
+
+    $("scanMeta").textContent =
+      error.message;
   }
 }
 
-async function simulate(id) {
+async function changeCapital(amount){
 
-  try {
+  const value =
+    Number(amount);
 
-    if(
-      !confirm(
-        'Simulate this paper trade using a fresh live quote? No real funds will move.'
-      )
-    )
-      return;
+  if(
+    !Number.isFinite(value) ||
+    value < 10 ||
+    value > 1000000
+  ){
 
-    const r =
-      await request(
-        '/api/paper/execute',
+    $("scanMeta").textContent =
+      "Enter paper capital between $10 and $1,000,000.";
+
+    return;
+  }
+
+  try{
+
+    const result =
+      await api(
+        "/api/account/capital",
         {
-          method:'POST',
+          method:"POST",
+          body:JSON.stringify({
+            amount:value
+          })
+        }
+      );
 
+    document
+      .querySelectorAll(".cap-btn")
+      .forEach(
+        button => {
+
+          button.classList.toggle(
+            "active",
+            Number(button.dataset.cap) === value
+          );
+        }
+      );
+
+    $("customCapital").value = "";
+
+    $("scanMeta").textContent =
+      "Paper capital updated to " +
+      money(result.account.balance) +
+      ".";
+
+    await refresh();
+
+  }catch(error){
+
+    $("scanMeta").textContent =
+      error.message;
+  }
+}
+
+async function simulateTrade(id){
+
+  const okay =
+    window.confirm(
+      "Simulate this paper opportunity with a fresh live quote? No real funds will move."
+    );
+
+  if(!okay){
+    return;
+  }
+
+  try{
+
+    $("scanMeta").textContent =
+      "Refreshing quote before paper simulation...";
+
+    const result =
+      await api(
+        "/api/paper/execute",
+        {
+          method:"POST",
           body:JSON.stringify({
             id
           })
         }
       );
 
-    $('scanStatus').textContent =
-      r.accepted
-      ?
-      'Paper trade simulated. Balance updated.'
-      :
-      'Paper trade rejected after fresh quote.';
+    if(result.accepted){
+
+      $("scanMeta").textContent =
+        "Paper simulation completed. Virtual balance updated.";
+
+    }else{
+
+      $("scanMeta").textContent =
+        "Opportunity was rejected after the fresh quote.";
+    }
 
     await refresh();
 
-  } catch(e) {
+  }catch(error){
 
-    $('scanStatus').innerHTML =
-      '<span class="err">' +
-      e.message +
-      '</span>';
+    $("scanMeta").textContent =
+      error.message;
   }
 }
 
-window.simulate = simulate;
+window.simulateTrade =
+  simulateTrade;
 
 document
-  .querySelectorAll(
-    '.cap[data-cap]'
-  )
+  .querySelectorAll(".cap-btn")
   .forEach(
-    b =>
-    b.addEventListener(
-      'click',
-      () =>
-      setCapital(
-        b.dataset.cap
-      )
-    )
+    button => {
+
+      button.addEventListener(
+        "click",
+        () =>
+          changeCapital(
+            button.dataset.cap
+          )
+      );
+    }
   );
 
-$('setCustom')
+$("setCapital")
   .addEventListener(
-    'click',
+    "click",
     () =>
-    setCapital(
-      $('customCapital').value
-    )
+      changeCapital(
+        $("customCapital").value
+      )
   );
 
-$('scanBtn')
+$("scanButton")
   .addEventListener(
-    'click',
+    "click",
     startScan
   );
 
-async function boot() {
+async function boot(){
 
   await loadStatus();
-
   await refresh();
 
-  polling =
-    setInterval(
-      async() => {
+  setInterval(
+    async () => {
 
-        await loadStatus();
+      await loadStatus();
+      await refresh();
 
-        await refresh();
-
-      },
-      4000
-    );
+    },
+    4000
+  );
 }
 
 boot();
