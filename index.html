@@ -1,45 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>ArbiFlow Pro Terminal</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ArbiFlow Terminal 3.0</title>
 
 <style>
 :root{
-  --bg:#050807;
-  --bg2:#08100d;
-  --panel:#0b1210;
-  --panel2:#0e1814;
-  --panel3:#111e19;
-  --line:#1a3027;
-  --line2:#254638;
-  --text:#f4f8f6;
-  --muted:#789087;
-  --green:#42f5a1;
-  --green2:#1fcf7d;
-  --red:#ff6571;
-  --amber:#f5c45b;
-  --blue:#65b8ff;
-  --cyan:#59e6df;
-  --purple:#a98cff;
+  --bg:#030605;
+  --p:#08100d;
+  --p2:#0b1612;
+  --line:#193127;
+  --txt:#eef8f3;
+  --mut:#6f8b7e;
+  --g:#3cf09b;
+  --r:#ff6372;
+  --a:#f2bf55;
 }
 
 *{
   box-sizing:border-box;
 }
 
-html,body{
+body{
   margin:0;
-  min-height:100%;
-  background:
-    radial-gradient(circle at 70% -20%,rgba(31,207,125,.12),transparent 35%),
-    #050807;
-  color:var(--text);
-  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:#030605;
+  color:var(--txt);
+  font:13px Inter,system-ui,-apple-system,Segoe UI,sans-serif;
 }
 
-button,input{
+button,
+input{
   font:inherit;
 }
 
@@ -47,907 +38,422 @@ button{
   cursor:pointer;
 }
 
-.shell{
-  display:grid;
-  grid-template-columns:230px 1fr;
-  min-height:100vh;
-}
-
-/* SIDEBAR */
-
-.sidebar{
-  position:fixed;
-  left:0;
-  top:0;
-  bottom:0;
-  width:230px;
-  background:#060b09;
-  border-right:1px solid var(--line);
-  padding:25px 18px;
+.top{
+  height:58px;
+  border-bottom:1px solid var(--line);
   display:flex;
-  flex-direction:column;
-  z-index:20;
+  align-items:center;
+  gap:18px;
+  padding:0 18px;
+  position:sticky;
+  top:0;
+  background:#030605f2;
+  z-index:5;
 }
 
 .logo{
-  font-size:28px;
+  font-size:21px;
   font-weight:950;
-  letter-spacing:-1.5px;
-  margin-bottom:5px;
 }
 
-.logo span{
-  color:var(--green);
+.logo i{
+  font-style:normal;
+  color:var(--g);
 }
 
-.version{
-  color:var(--muted);
-  font-size:10px;
-  letter-spacing:1.4px;
-  text-transform:uppercase;
-  margin-bottom:35px;
-}
-
-.nav-label{
+.tag{
   font-size:9px;
-  color:#52665e;
-  text-transform:uppercase;
-  letter-spacing:1.5px;
-  margin:15px 10px 8px;
-}
-
-.nav-item{
-  display:flex;
-  align-items:center;
-  gap:11px;
-  padding:12px 12px;
-  border-radius:10px;
-  color:#93a79f;
-  font-size:12px;
-  font-weight:750;
-  margin-bottom:3px;
-}
-
-.nav-item.active{
-  background:#0d1c16;
-  color:var(--green);
-  border:1px solid #183b2c;
-}
-
-.nav-icon{
-  width:9px;
-  height:9px;
-  border-radius:3px;
-  background:#31483f;
-}
-
-.active .nav-icon{
-  background:var(--green);
-  box-shadow:0 0 12px rgba(66,245,161,.45);
-}
-
-.side-bottom{
-  margin-top:auto;
-}
-
-.engine-mini{
-  border:1px solid var(--line);
-  background:#09110e;
-  border-radius:12px;
-  padding:13px;
-}
-
-.engine-mini-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:10px;
-  font-weight:900;
-}
-
-.live-dot{
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:#53655e;
-}
-
-.live-dot.online{
-  background:var(--green);
-  box-shadow:0 0 12px var(--green);
-}
-
-.engine-mini-sub{
-  font-size:9px;
-  color:var(--muted);
-  margin-top:8px;
-}
-
-/* MAIN */
-
-.main{
-  grid-column:2;
-  min-width:0;
-}
-
-.topbar{
-  height:70px;
-  padding:0 25px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  background:rgba(5,8,7,.92);
-  position:sticky;
-  top:0;
-  z-index:15;
-  backdrop-filter:blur(14px);
-}
-
-.page-title{
-  font-size:16px;
-  font-weight:900;
-}
-
-.page-sub{
-  font-size:10px;
-  color:var(--muted);
-  margin-top:3px;
-}
-
-.top-right{
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-
-.status-pill{
-  border:1px solid var(--line);
-  border-radius:999px;
-  padding:8px 11px;
-  font-size:9px;
-  font-weight:900;
-  letter-spacing:.6px;
-  color:var(--muted);
-}
-
-.status-pill.live{
-  color:var(--green);
-  border-color:#20543c;
-  background:#0b1913;
-}
-
-.content{
-  padding:20px 24px 45px;
-  max-width:1600px;
-  margin:auto;
-}
-
-/* COMMAND CENTER */
-
-.command{
-  display:grid;
-  grid-template-columns:1.45fr .8fr;
-  gap:14px;
-  margin-bottom:14px;
-}
-
-.hero{
-  position:relative;
-  overflow:hidden;
-  background:
-    linear-gradient(120deg,#0b1712,#0a110f);
-  border:1px solid #1d3a2e;
-  border-radius:18px;
-  padding:24px;
-  min-height:220px;
-}
-
-.hero:after{
-  content:"";
-  position:absolute;
-  width:320px;
-  height:320px;
-  right:-120px;
-  top:-130px;
-  border-radius:50%;
-  background:rgba(66,245,161,.08);
-  filter:blur(4px);
-}
-
-.kicker{
-  font-size:9px;
-  text-transform:uppercase;
-  letter-spacing:1.8px;
-  color:var(--green);
-  font-weight:900;
-}
-
-.hero h1{
-  font-size:31px;
-  line-height:1.05;
-  margin:12px 0 8px;
-  max-width:620px;
-  letter-spacing:-1.3px;
-}
-
-.hero p{
-  max-width:650px;
-  font-size:12px;
-  line-height:1.6;
-  color:#91a59d;
-  margin:0;
-}
-
-.scan-control{
-  display:flex;
-  align-items:center;
-  gap:13px;
-  margin-top:22px;
-  flex-wrap:wrap;
-  position:relative;
-  z-index:2;
-}
-
-.scan-button{
-  background:var(--green);
-  color:#03110a;
-  border:0;
-  border-radius:11px;
-  padding:14px 22px;
-  font-weight:950;
-  font-size:12px;
-  min-width:235px;
-  box-shadow:0 8px 28px rgba(66,245,161,.13);
-}
-
-.scan-button:hover{
-  filter:brightness(1.05);
-}
-
-.scan-button:disabled{
-  opacity:.55;
-  cursor:not-allowed;
-}
-
-.scan-meta{
-  font-size:10px;
-  color:var(--muted);
-}
-
-.progress-wrap{
-  position:absolute;
-  left:24px;
-  right:24px;
-  bottom:20px;
-}
-
-.progress-top{
-  display:flex;
-  justify-content:space-between;
-  font-size:9px;
-  color:var(--muted);
-  margin-bottom:7px;
-}
-
-.progress-track{
-  height:6px;
-  border-radius:99px;
-  background:#050a08;
-  overflow:hidden;
-  border:1px solid #17271f;
-}
-
-.progress-bar{
-  height:100%;
-  width:0;
-  background:linear-gradient(90deg,var(--green2),var(--green));
-  transition:width .4s ease;
-}
-
-/* CAPITAL */
-
-.capital-box{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:20px;
-}
-
-.box-title{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:17px;
-}
-
-.box-title strong{
-  font-size:12px;
-}
-
-.box-title span{
-  color:var(--muted);
-  font-size:9px;
-}
-
-.capital-display{
-  font-size:35px;
-  font-weight:950;
-  letter-spacing:-1.5px;
-  margin-bottom:3px;
-}
-
-.capital-sub{
-  color:var(--muted);
-  font-size:10px;
-  margin-bottom:17px;
-}
-
-.cap-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:7px;
-}
-
-.cap-btn{
-  border:1px solid var(--line);
-  color:#a2b4ad;
-  background:#08100d;
-  padding:9px 5px;
-  border-radius:8px;
-  font-size:10px;
-  font-weight:850;
-}
-
-.cap-btn.active{
-  border-color:var(--green);
-  color:var(--green);
-  background:#0b1913;
-}
-
-.custom-row{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:7px;
-  margin-top:8px;
-}
-
-.custom-row input{
-  width:100%;
-  background:#070d0b;
-  color:white;
-  border:1px solid var(--line);
-  border-radius:8px;
-  padding:10px;
-  outline:none;
-  font-size:11px;
-}
-
-.set-btn{
-  border:1px solid #25553e;
-  background:#0e241a;
-  color:var(--green);
-  border-radius:8px;
-  font-size:10px;
-  font-weight:900;
-  padding:0 14px;
-}
-
-/* METRICS */
-
-.metrics{
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:10px;
-  margin-bottom:14px;
-}
-
-.metric{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:13px;
-  padding:15px;
-}
-
-.metric-label{
-  color:var(--muted);
-  font-size:8px;
-  text-transform:uppercase;
-  letter-spacing:1.1px;
-  font-weight:800;
-}
-
-.metric-value{
-  font-size:22px;
-  font-weight:950;
-  margin-top:7px;
-  letter-spacing:-.7px;
-}
-
-.metric-sub{
-  color:#5f756c;
-  font-size:9px;
-  margin-top:4px;
-}
-
-.green{
-  color:var(--green);
-}
-
-.red{
-  color:var(--red);
-}
-
-/* NETWORK MATRIX */
-
-.section{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:16px;
-  margin-bottom:14px;
-}
-
-.section-head{
-  padding:15px 17px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.section-title{
-  font-size:12px;
-  font-weight:900;
-}
-
-.section-note{
-  color:var(--muted);
-  font-size:9px;
-}
-
-.network-grid{
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-}
-
-.network-card{
-  padding:15px;
-  border-right:1px solid var(--line);
-  min-height:105px;
-}
-
-.network-card:last-child{
-  border-right:0;
-}
-
-.network-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.network-name{
-  font-size:11px;
-  font-weight:900;
-}
-
-.network-light{
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:#30433b;
-}
-
-.network-light.live{
-  background:var(--green);
-  box-shadow:0 0 10px rgba(66,245,161,.5);
-}
-
-.network-chain{
-  color:var(--muted);
-  font-size:9px;
-  margin-top:6px;
-}
-
-.token-list{
-  color:#63776f;
-  font-size:8px;
-  line-height:1.5;
-  margin-top:11px;
-}
-
-/* WORKSPACE */
-
-.workspace{
-  display:grid;
-  grid-template-columns:1.6fr .7fr;
-  gap:14px;
-}
-
-.feed{
-  min-height:500px;
-}
-
-.feed-tabs{
-  display:flex;
-  gap:5px;
-}
-
-.tab{
-  font-size:8px;
-  padding:6px 9px;
-  border-radius:7px;
-  border:1px solid var(--line);
-  color:var(--muted);
-}
-
-.tab.active{
-  color:var(--green);
-  border-color:#24503b;
-  background:#0b1a14;
-}
-
-.feed-body{
-  padding:14px;
-}
-
-.empty{
-  min-height:360px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  color:var(--muted);
-}
-
-.empty-inner{
-  max-width:390px;
-}
-
-.radar{
-  width:74px;
-  height:74px;
-  border:1px solid #214636;
-  border-radius:50%;
-  margin:0 auto 17px;
-  position:relative;
-}
-
-.radar:before,
-.radar:after{
-  content:"";
-  position:absolute;
-  border:1px solid #173529;
-  border-radius:50%;
-  inset:14px;
-}
-
-.radar:after{
-  inset:29px;
-  background:var(--green);
-  border:0;
-  box-shadow:0 0 18px rgba(66,245,161,.4);
-}
-
-.empty strong{
-  color:white;
-  display:block;
-  font-size:15px;
-  margin-bottom:7px;
-}
-
-.empty p{
-  font-size:10px;
-  line-height:1.6;
-  margin:0;
-}
-
-/* OPPORTUNITY */
-
-.opportunity{
-  border:1px solid var(--line);
-  background:#08100d;
-  border-radius:13px;
-  padding:15px;
-  margin-bottom:10px;
-}
-
-.opportunity.confirmed{
-  border-color:#285d44;
-  box-shadow:inset 3px 0 0 var(--green);
-}
-
-.opp-header{
-  display:flex;
-  justify-content:space-between;
-  gap:15px;
-  align-items:flex-start;
-}
-
-.opp-network{
-  color:var(--green);
-  font-size:8px;
-  font-weight:950;
-  text-transform:uppercase;
+  color:var(--mut);
   letter-spacing:1px;
 }
 
-.opp-route{
-  font-size:15px;
-  font-weight:900;
-  margin-top:4px;
+.spacer{
+  flex:1;
 }
 
-.risk{
+.badge{
   border:1px solid var(--line);
-  padding:6px 9px;
-  border-radius:999px;
-  font-size:8px;
+  border-radius:7px;
+  padding:7px 9px;
+  font-size:9px;
+  font-weight:850;
+}
+
+.online{
+  color:var(--g);
+  border-color:#285841;
+}
+
+.app{
+  max-width:1500px;
+  margin:auto;
+  padding:14px;
+}
+
+.scanner{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:12px;
+  background:var(--p);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:13px;
+  margin-bottom:10px;
+}
+
+.scanleft{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  min-width:0;
+}
+
+.scanbtn{
+  background:var(--g);
+  color:#02110a;
+  border:0;
+  border-radius:8px;
+  padding:11px 18px;
   font-weight:950;
+  white-space:nowrap;
 }
 
-.risk.low{
-  color:var(--green);
+.scanbtn:disabled{
+  opacity:.5;
 }
 
-.risk.medium{
-  color:var(--amber);
+.phase{
+  font-size:10px;
+  color:var(--mut);
+  min-width:120px;
 }
 
-.risk.high{
-  color:var(--red);
+.route{
+  font-size:10px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  color:#a5bbb1;
 }
 
-.opp-data{
+.cap{
+  display:flex;
+  gap:5px;
+  align-items:center;
+}
+
+.cap button,
+.cap input{
+  background:#07100c;
+  border:1px solid var(--line);
+  color:var(--txt);
+  border-radius:7px;
+  padding:8px;
+  font-size:9px;
+}
+
+.cap button.active{
+  color:var(--g);
+  border-color:#347657;
+}
+
+.cap input{
+  width:90px;
+}
+
+.progress{
+  height:3px;
+  background:#101d18;
+  margin:0 2px 11px;
+  border-radius:9px;
+  overflow:hidden;
+}
+
+.progress div{
+  height:100%;
+  background:var(--g);
+  width:0;
+  transition:.3s;
+}
+
+.ticker{
   display:grid;
   grid-template-columns:repeat(6,1fr);
-  gap:7px;
-  margin-top:13px;
+  gap:6px;
+  margin-bottom:10px;
 }
 
-.data-box{
-  background:#0b1511;
-  border:1px solid #14251e;
-  border-radius:8px;
-  padding:9px;
+.net{
+  background:var(--p);
+  border:1px solid var(--line);
+  border-radius:9px;
+  padding:10px;
 }
 
-.data-label{
-  color:#60746c;
-  font-size:7px;
+.nettop{
+  display:flex;
+  justify-content:space-between;
+  font-weight:850;
+  font-size:10px;
+}
+
+.dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--g);
+  box-shadow:0 0 8px #3cf09b77;
+}
+
+.tokens{
+  font-size:8px;
+  color:var(--mut);
+  margin-top:6px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  border:1px solid var(--line);
+  border-radius:10px;
+  overflow:hidden;
+  margin-bottom:10px;
+}
+
+.stat{
+  background:var(--p);
+  padding:10px 12px;
+  border-right:1px solid var(--line);
+}
+
+.stat:last-child{
+  border:0;
+}
+
+.sl{
+  font-size:8px;
+  color:var(--mut);
   text-transform:uppercase;
   letter-spacing:.7px;
 }
 
-.data-value{
-  font-size:11px;
+.sv{
+  font-size:17px;
   font-weight:900;
   margin-top:4px;
 }
 
-.opp-footer{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-top:11px;
+.grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 330px;
   gap:10px;
 }
 
-.quote-status{
+.panel{
+  background:var(--p);
+  border:1px solid var(--line);
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.ph{
+  height:42px;
+  padding:0 12px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-size:10px;
+  font-weight:900;
+}
+
+.mut{
+  color:var(--mut);
   font-size:8px;
-  color:var(--muted);
+  font-weight:500;
 }
 
-.sim-btn{
-  border:1px solid #2a6549;
-  background:#0d2419;
-  color:var(--green);
-  border-radius:8px;
-  padding:8px 12px;
+table{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+}
+
+th{
+  font-size:7px;
+  color:var(--mut);
+  text-transform:uppercase;
+  text-align:left;
+  padding:9px 8px;
+  border-bottom:1px solid var(--line);
+}
+
+td{
+  padding:10px 8px;
+  border-bottom:1px solid #11221a;
   font-size:9px;
-  font-weight:950;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 
-/* RIGHT COLUMN */
+tr:hover td{
+  background:#0b1712;
+}
 
-.right-stack{
+.pos{
+  color:var(--g);
+}
+
+.neg{
+  color:var(--r);
+}
+
+.risk{
+  font-size:8px;
+  font-weight:900;
+}
+
+.LOW{
+  color:var(--g);
+}
+
+.MEDIUM{
+  color:var(--a);
+}
+
+.HIGH{
+  color:var(--r);
+}
+
+.action{
+  border:1px solid #2c654a;
+  background:#0b2117;
+  color:var(--g);
+  padding:6px 8px;
+  border-radius:6px;
+  font-size:8px;
+  font-weight:900;
+}
+
+.empty{
+  padding:80px 20px;
+  text-align:center;
+  color:var(--mut);
+  font-size:10px;
+}
+
+.empty b{
+  display:block;
+  color:var(--txt);
+  font-size:14px;
+  margin-bottom:7px;
+}
+
+.side{
   display:flex;
   flex-direction:column;
-  gap:14px;
+  gap:10px;
 }
 
-.engine-body{
-  padding:14px 16px;
+.body{
+  padding:11px;
 }
 
 .kv{
   display:flex;
   justify-content:space-between;
-  gap:12px;
-  padding:9px 0;
-  border-bottom:1px solid #14251e;
+  padding:8px 0;
+  border-bottom:1px solid #11221a;
   font-size:9px;
-}
-
-.kv:last-child{
-  border:0;
 }
 
 .kv span{
-  color:var(--muted);
+  color:var(--mut);
 }
 
-.kv b{
-  text-align:right;
-  max-width:60%;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
+.log{
+  font-size:9px;
+  color:#9cb2a8;
+  line-height:1.6;
+  padding:8px 0;
+  border-bottom:1px solid #11221a;
 }
 
-.test-list{
-  padding:8px 15px 14px;
+.log b{
+  color:var(--txt);
 }
 
-.test-row{
-  padding:10px 0;
-  border-bottom:1px solid #14251e;
-}
-
-.test-row:last-child{
-  border:0;
-}
-
-.test-top{
+.best{
   display:flex;
   justify-content:space-between;
-  gap:10px;
+  gap:8px;
+  padding:8px 0;
+  border-bottom:1px solid #11221a;
   font-size:9px;
 }
 
-.test-route{
-  font-weight:800;
+.best span:first-child{
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap;
-}
-
-.test-net{
-  font-weight:900;
-}
-
-.test-sub{
-  color:var(--muted);
-  font-size:8px;
-  margin-top:4px;
-}
-
-.activity{
-  padding:13px 15px;
-}
-
-.activity-item{
-  display:grid;
-  grid-template-columns:8px 1fr;
-  gap:9px;
-  margin-bottom:12px;
-}
-
-.activity-item:last-child{
-  margin-bottom:0;
-}
-
-.activity-dot{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:#31453c;
-  margin-top:4px;
-}
-
-.activity-dot.live{
-  background:var(--green);
-}
-
-.activity-text{
-  font-size:9px;
-  line-height:1.45;
-  color:#91a39c;
-}
-
-.activity-text b{
-  color:white;
-}
-
-.warning{
-  border:1px solid #47391c;
-  background:#171309;
-  color:#cdb87c;
-  border-radius:10px;
-  padding:11px;
-  font-size:8px;
-  line-height:1.5;
-  margin-top:12px;
-}
-
-/* RESPONSIVE */
-
-@media(max-width:1200px){
-  .metrics{
-    grid-template-columns:repeat(3,1fr);
-  }
-
-  .network-grid{
-    grid-template-columns:repeat(3,1fr);
-  }
-
-  .network-card:nth-child(3){
-    border-right:0;
-  }
-
-  .network-card{
-    border-bottom:1px solid var(--line);
-  }
-
-  .opp-data{
-    grid-template-columns:repeat(3,1fr);
-  }
 }
 
 @media(max-width:900px){
-  .shell{
-    display:block;
-  }
 
-  .sidebar{
-    display:none;
-  }
-
-  .main{
-    grid-column:1;
-  }
-
-  .command,
-  .workspace{
+  .grid{
     grid-template-columns:1fr;
+  }
+
+  .ticker,
+  .stats{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  .scanner{
+    grid-template-columns:1fr;
+  }
+
+  .cap{
+    overflow:auto;
+  }
+
+  .stat:nth-child(3){
+    border-right:0;
   }
 }
 
 @media(max-width:600px){
-  .content{
-    padding:12px;
+
+  .app{
+    padding:8px;
   }
 
-  .topbar{
-    padding:0 14px;
-  }
-
-  .metrics{
+  .ticker{
     grid-template-columns:repeat(2,1fr);
   }
 
-  .network-grid{
+  .stats{
     grid-template-columns:repeat(2,1fr);
   }
 
-  .network-card:nth-child(3){
-    border-right:1px solid var(--line);
+  .scanleft{
+    align-items:flex-start;
+    flex-wrap:wrap;
   }
 
-  .network-card:nth-child(even){
-    border-right:0;
+  .top .tag{
+    display:none;
   }
 
-  .opp-data{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .hero{
-    min-height:270px;
-  }
-
-  .hero h1{
-    font-size:25px;
+  th:nth-child(4),
+  td:nth-child(4),
+  th:nth-child(5),
+  td:nth-child(5){
+    display:none;
   }
 }
 </style>
@@ -955,411 +461,341 @@ button{
 
 <body>
 
-<div class="shell">
+<header class="top">
 
-<aside class="sidebar">
-
-  <div class="logo">Arbi<span>Flow</span></div>
-  <div class="version">Professional Arbitrage Terminal</div>
-
-  <div class="nav-label">Terminal</div>
-
-  <div class="nav-item active">
-    <span class="nav-icon"></span>
-    Opportunity Scanner
+  <div class="logo">
+    Arbi<i>Flow</i>
   </div>
 
-  <div class="nav-item">
-    <span class="nav-icon"></span>
-    Route Intelligence
+  <div class="tag">
+    TERMINAL 3.0 · LIVE ARBITRAGE INTELLIGENCE
   </div>
 
-  <div class="nav-item">
-    <span class="nav-icon"></span>
-    Paper Portfolio
+  <div class="spacer"></div>
+
+  <div class="badge">
+    PAPER
   </div>
 
-  <div class="nav-label">Monitoring</div>
-
-  <div class="nav-item">
-    <span class="nav-icon"></span>
-    Network Matrix
-  </div>
-
-  <div class="nav-item">
-    <span class="nav-icon"></span>
-    Execution History
-  </div>
-
-  <div class="side-bottom">
-
-    <div class="engine-mini">
-
-      <div class="engine-mini-top">
-        <span>ENGINE 2.2</span>
-        <span id="sideDot" class="live-dot"></span>
-      </div>
-
-      <div id="sideEngine" class="engine-mini-sub">
-        Connecting to opportunity engine...
-      </div>
-
-    </div>
-
-  </div>
-
-</aside>
-
-<main class="main">
-
-<header class="topbar">
-
-  <div>
-    <div class="page-title">Opportunity Scanner</div>
-    <div class="page-sub">
-      Live multi-network arbitrage intelligence
-    </div>
-  </div>
-
-  <div class="top-right">
-
-    <div id="modePill" class="status-pill">
-      PAPER MODE
-    </div>
-
-    <div id="enginePill" class="status-pill">
-      CONNECTING
-    </div>
-
+  <div id="engine" class="badge">
+    CONNECTING
   </div>
 
 </header>
 
-<div class="content">
+<main class="app">
 
-<section class="command">
+<section class="scanner">
 
-  <div class="hero">
+  <div class="scanleft">
 
-    <div class="kicker">
-      Live Market Intelligence
-    </div>
-
-    <h1>
-      Scan multiple networks for
-      pricing inefficiencies.
-    </h1>
-
-    <p>
-      ArbiFlow evaluates live market routes, position sizes,
-      network costs and fresh re-quotes before a route can
-      qualify for paper simulation.
-    </p>
-
-    <div class="scan-control">
-
-      <button id="scanButton" class="scan-button">
-        SCAN FOR OPPORTUNITIES
-      </button>
-
-      <div id="scanMeta" class="scan-meta">
-        Engine ready. Start a live market scan.
-      </div>
-
-    </div>
-
-    <div class="progress-wrap">
-
-      <div class="progress-top">
-        <span id="scanPhase">IDLE</span>
-        <span id="scanProgressText">0%</span>
-      </div>
-
-      <div class="progress-track">
-        <div id="scanProgress" class="progress-bar"></div>
-      </div>
-
-    </div>
-
-  </div>
-
-  <div class="capital-box">
-
-    <div class="box-title">
-      <strong>Paper Capital</strong>
-      <span>SIMULATION BALANCE</span>
-    </div>
-
-    <div id="capitalDisplay" class="capital-display">
-      $500.00
-    </div>
-
-    <div class="capital-sub">
-      Select the amount available to the sizing engine.
-    </div>
-
-    <div class="cap-grid">
-
-      <button class="cap-btn active" data-cap="500">
-        $500
-      </button>
-
-      <button class="cap-btn" data-cap="1000">
-        $1K
-      </button>
-
-      <button class="cap-btn" data-cap="2500">
-        $2.5K
-      </button>
-
-      <button class="cap-btn" data-cap="5000">
-        $5K
-      </button>
-
-      <button class="cap-btn" data-cap="10000">
-        $10K
-      </button>
-
-      <button class="cap-btn" data-cap="25000">
-        $25K
-      </button>
-
-    </div>
-
-    <div class="custom-row">
-
-      <input
-        id="customCapital"
-        type="number"
-        min="10"
-        max="1000000"
-        placeholder="Custom capital"
-      >
-
-      <button id="setCapital" class="set-btn">
-        SET
-      </button>
-
-    </div>
-
-  </div>
-
-</section>
-
-<section class="metrics">
-
-  <div class="metric">
-    <div class="metric-label">Paper Balance</div>
-    <div id="balance" class="metric-value">$500.00</div>
-    <div class="metric-sub">Current virtual equity</div>
-  </div>
-
-  <div class="metric">
-    <div class="metric-label">Realized P&amp;L</div>
-    <div id="pnl" class="metric-value">$0.00</div>
-    <div class="metric-sub">Completed simulations</div>
-  </div>
-
-  <div class="metric">
-    <div class="metric-label">Routes Tested</div>
-    <div id="routesTested" class="metric-value">0</div>
-    <div id="routesPlanned" class="metric-sub">0 planned</div>
-  </div>
-
-  <div class="metric">
-    <div class="metric-label">Candidates</div>
-    <div id="candidateCount" class="metric-value">0</div>
-    <div class="metric-sub">Positive initial routes</div>
-  </div>
-
-  <div class="metric">
-    <div class="metric-label">Confirmed</div>
-    <div id="confirmedCount" class="metric-value">0</div>
-    <div class="metric-sub">Fresh re-quote passed</div>
-  </div>
-
-  <div class="metric">
-    <div class="metric-label">Paper Trades</div>
-    <div id="paperTrades" class="metric-value">0</div>
-    <div class="metric-sub">Simulated executions</div>
-  </div>
-
-</section>
-
-<section class="section">
-
-  <div class="section-head">
+    <button id="scan" class="scanbtn">
+      RUN MARKET SCAN
+    </button>
 
     <div>
-      <div class="section-title">Network Matrix</div>
-      <div class="section-note">
-        Networks available to Engine 2.2
-      </div>
-    </div>
 
-    <div id="networkStatus" class="section-note">
-      Waiting for engine...
+      <div id="phase" class="phase">
+        IDLE · 0%
+      </div>
+
+      <div id="route" class="route">
+        Scanner ready
+      </div>
+
     </div>
 
   </div>
 
-  <div id="networkGrid" class="network-grid"></div>
+  <div class="cap">
 
-</section>
+    <span class="mut">
+      CAPITAL
+    </span>
 
-<div class="workspace">
+    <button data-c="500">
+      $500
+    </button>
 
-<section class="section feed">
+    <button data-c="1000">
+      $1K
+    </button>
 
-  <div class="section-head">
+    <button data-c="2500">
+      $2.5K
+    </button>
 
-    <div>
-      <div class="section-title">Opportunity Intelligence</div>
-      <div id="feedSub" class="section-note">
-        Waiting for first scan
-      </div>
-    </div>
+    <button data-c="5000">
+      $5K
+    </button>
 
-    <div class="feed-tabs">
-      <div class="tab active">CONFIRMED</div>
-      <div class="tab">LIVE ROUTES</div>
-      <div class="tab">REJECTED</div>
-    </div>
+    <button data-c="10000">
+      $10K
+    </button>
 
-  </div>
+    <input
+      id="custom"
+      type="number"
+      placeholder="Custom"
+    >
 
-  <div id="opportunityFeed" class="feed-body">
-
-    <div class="empty">
-
-      <div class="empty-inner">
-
-        <div class="radar"></div>
-
-        <strong>
-          Market scanner standing by
-        </strong>
-
-        <p>
-          Select your paper capital and start a live scan.
-          ArbiFlow will test round-trip and triangular routes
-          across the connected networks.
-        </p>
-
-      </div>
-
-    </div>
+    <button id="set">
+      SET
+    </button>
 
   </div>
 
 </section>
 
-<div class="right-stack">
+<div class="progress">
+  <div id="bar"></div>
+</div>
 
-<section class="section">
+<section
+  id="nets"
+  class="ticker">
+</section>
 
-  <div class="section-head">
-    <div class="section-title">Engine Intelligence</div>
-    <div class="section-note">LIVE</div>
+<section class="stats">
+
+  <div class="stat">
+    <div class="sl">Paper Equity</div>
+    <div id="bal" class="sv">$0.00</div>
   </div>
 
-  <div class="engine-body">
+  <div class="stat">
+    <div class="sl">Realized P&amp;L</div>
+    <div id="pnl" class="sv">$0.00</div>
+  </div>
+
+  <div class="stat">
+    <div class="sl">Tests Complete</div>
+    <div id="tests" class="sv">0</div>
+  </div>
+
+  <div class="stat">
+    <div class="sl">Candidates</div>
+    <div id="cands" class="sv">0</div>
+  </div>
+
+  <div class="stat">
+    <div class="sl">Confirmed</div>
+    <div id="conf" class="sv">0</div>
+  </div>
+
+  <div class="stat">
+    <div class="sl">Paper Trades</div>
+    <div id="trades" class="sv">0</div>
+  </div>
+
+</section>
+
+<div class="grid">
+
+<section class="panel">
+
+  <div class="ph">
+
+    <span>
+      LIVE ROUTE BOARD
+    </span>
+
+    <span
+      id="boardstate"
+      class="mut">
+      WAITING FOR SCAN
+    </span>
+
+  </div>
+
+  <div style="overflow:auto">
+
+    <table>
+
+      <thead>
+
+        <tr>
+
+          <th style="width:10%">
+            Network
+          </th>
+
+          <th style="width:27%">
+            Route
+          </th>
+
+          <th>
+            Size
+          </th>
+
+          <th>
+            Final Value
+          </th>
+
+          <th>
+            Gas
+          </th>
+
+          <th>
+            Net
+          </th>
+
+          <th>
+            ROI
+          </th>
+
+          <th>
+            Risk
+          </th>
+
+          <th>
+            Status
+          </th>
+
+          <th></th>
+
+        </tr>
+
+      </thead>
+
+      <tbody id="rows"></tbody>
+
+    </table>
+
+  </div>
+
+  <div
+    id="empty"
+    class="empty">
+
+    <b>
+      No market scan yet
+    </b>
+
+    Run the scanner to populate ranked live routes.
+    Nothing is fabricated when no profitable route exists.
+
+  </div>
+
+</section>
+
+<aside class="side">
+
+<section class="panel">
+
+  <div class="ph">
+
+    <span>
+      ENGINE STATE
+    </span>
+
+    <span class="mut">
+      LIVE
+    </span>
+
+  </div>
+
+  <div class="body">
 
     <div class="kv">
-      <span>Engine Version</span>
-      <b id="engineVersion">—</b>
+      <span>Version</span>
+      <b id="ver">—</b>
     </div>
 
     <div class="kv">
       <span>Provider</span>
-      <b id="provider">—</b>
+      <b id="prov">—</b>
     </div>
 
     <div class="kv">
-      <span>Current Phase</span>
-      <b id="currentPhase">IDLE</b>
+      <span>Current network</span>
+      <b id="curNet">—</b>
     </div>
 
     <div class="kv">
-      <span>Current Network</span>
-      <b id="currentNetwork">—</b>
+      <span>Last quote</span>
+      <b id="quote">—</b>
     </div>
 
     <div class="kv">
-      <span>Current Route</span>
-      <b id="currentRoute">—</b>
+      <span>Rate limited</span>
+      <b id="rate">NO</b>
     </div>
 
     <div class="kv">
-      <span>Last Live Quote</span>
-      <b id="lastQuote">—</b>
-    </div>
-
-    <div class="kv">
-      <span>Rate Limited</span>
-      <b id="rateLimited">NO</b>
-    </div>
-
-    <div class="warning">
-      Paper mode does not move real funds. Confirmed paper
-      opportunities are live-data simulations and are not
-      guaranteed real-world profits.
+      <span>Real executable</span>
+      <b>0</b>
     </div>
 
   </div>
 
 </section>
 
-<section class="section">
+<section class="panel">
 
-  <div class="section-head">
-    <div class="section-title">Top Route Tests</div>
-    <div class="section-note">RANKED BY NET</div>
+  <div class="ph">
+
+    <span>
+      TOP ROUTES
+    </span>
+
+    <span class="mut">
+      BY EST. NET
+    </span>
+
   </div>
 
-  <div id="testList" class="test-list">
+  <div
+    id="best"
+    class="body">
 
-    <div class="empty" style="min-height:170px">
-      <div class="empty-inner">
-        <strong>No route data yet</strong>
-        <p>Start a scan to populate live route tests.</p>
-      </div>
+    <div class="mut">
+      No results yet.
     </div>
 
   </div>
 
 </section>
 
-<section class="section">
+<section class="panel">
 
-  <div class="section-head">
-    <div class="section-title">Scanner Activity</div>
-    <div class="section-note">REAL TIME</div>
+  <div class="ph">
+
+    <span>
+      ACTIVITY
+    </span>
+
+    <span class="mut">
+      SCANNER
+    </span>
+
   </div>
 
-  <div id="activity" class="activity">
+  <div
+    id="log"
+    class="body">
 
-    <div class="activity-item">
-      <div class="activity-dot"></div>
-      <div class="activity-text">
-        <b>Terminal initialized.</b><br>
-        Waiting for live market scan.
-      </div>
+    <div class="log">
+
+      <b>
+        Terminal ready.
+      </b>
+
+      <br>
+
+      Waiting for a market scan.
+
     </div>
 
   </div>
 
 </section>
 
-</div>
-
-</div>
+</aside>
 
 </div>
 
 </main>
-
-</div>
 
 <script>
 
@@ -1367,10 +803,11 @@ const API =
   "https://arbiflow-engine-v2.onrender.com";
 
 const $ =
-  id => document.getElementById(id);
+  id =>
+  document.getElementById(id);
 
 const money =
-  value =>
+  n =>
   new Intl.NumberFormat(
     "en-US",
     {
@@ -1379,499 +816,449 @@ const money =
       minimumFractionDigits:2,
       maximumFractionDigits:4
     }
-  ).format(Number(value || 0));
+  ).format(
+    Number(n || 0)
+  );
 
-const number =
-  value =>
-  new Intl.NumberFormat("en-US")
-  .format(Number(value || 0));
+const ago =
+  s => {
 
-function timeAgo(value){
+    if(!s){
+      return "—";
+    }
 
-  if(!value){
-    return "—";
-  }
+    const d =
+      Math.max(
+        0,
+        Date.now() -
+        new Date(s)
+      );
 
-  const diff =
-    Math.max(
-      0,
-      Date.now() -
-      new Date(value).getTime()
-    );
+    if(d < 60000){
 
-  if(diff < 60000){
-    return Math.floor(diff / 1000) + " sec ago";
-  }
+      return (
+        Math.floor(d / 1000) +
+        "s ago"
+      );
+    }
 
-  if(diff < 3600000){
-    return Math.floor(diff / 60000) + " min ago";
-  }
+    if(d < 3600000){
 
-  return new Date(value).toLocaleString();
-}
+      return (
+        Math.floor(d / 60000) +
+        "m ago"
+      );
+    }
 
-async function api(path,options={}){
+    return new Date(s)
+      .toLocaleString();
+  };
 
-  const response =
+async function api(
+  path,
+  opt = {}
+){
+
+  const r =
     await fetch(
       API + path,
       {
-        ...options,
+        ...opt,
+
         headers:{
-          "Content-Type":"application/json",
-          ...(options.headers || {})
+          "Content-Type":
+            "application/json",
+
+          ...(opt.headers || {})
         }
       }
     );
 
-  let data = {};
+  let j = {};
 
   try{
-    data = await response.json();
-  }catch{}
+    j = await r.json();
+  }
+  catch{}
 
-  if(!response.ok){
+  if(!r.ok){
 
-    throw new Error(
-      data.message ||
-      "Request failed with status " +
-      response.status
+    throw Error(
+      j.message ||
+      "HTTP " +
+      r.status
     );
   }
 
-  return data;
+  return j;
 }
 
-function setEngineOnline(online){
+function row(
+  x,
+  confirmed = false
+){
 
-  $("enginePill").textContent =
-    online
-    ? "ENGINE ONLINE"
-    : "ENGINE OFFLINE";
-
-  $("enginePill")
-    .classList.toggle(
-      "live",
-      online
+  const n =
+    Number(
+      x.estimatedNet || 0
     );
-
-  $("sideDot")
-    .classList.toggle(
-      "online",
-      online
-    );
-
-  $("sideEngine").textContent =
-    online
-    ? "Live connection established"
-    : "Engine connection unavailable";
-}
-
-function renderNetworks(networks=[]){
-
-  $("networkStatus").textContent =
-    networks.length +
-    " NETWORKS CONNECTED";
-
-  $("networkGrid").innerHTML =
-    networks.map(
-      network => {
-
-        const tokens =
-          (network.tokens || [])
-          .join(" · ");
-
-        return `
-          <div class="network-card">
-
-            <div class="network-top">
-
-              <div class="network-name">
-                ${network.name}
-              </div>
-
-              <div class="network-light live"></div>
-
-            </div>
-
-            <div class="network-chain">
-              Chain ID ${network.chainId}
-            </div>
-
-            <div class="token-list">
-              ${tokens}
-            </div>
-
-          </div>
-        `;
-      }
-    ).join("");
-}
-
-function riskClass(level){
-
-  const value =
-    String(level || "")
-    .toLowerCase();
-
-  if(
-    value === "low" ||
-    value === "medium" ||
-    value === "high"
-  ){
-    return value;
-  }
-
-  return "";
-}
-
-function opportunityCard(item){
-
-  const net =
-    Number(item.estimatedNet || 0);
 
   const roi =
-    Number(item.roi || 0);
+    Number(
+      x.roi || 0
+    );
+
+  const risk =
+    x.riskLevel || "—";
 
   return `
-    <div class="opportunity confirmed">
+    <tr>
 
-      <div class="opp-header">
+      <td>
+        ${x.network || "—"}
+      </td>
 
-        <div>
+      <td title="${x.route || ""}">
+        ${x.route || "—"}
+      </td>
 
-          <div class="opp-network">
-            ${item.network || "—"}
-            ·
-            ${item.routeType || "ROUTE"}
-          </div>
+      <td>
+        ${money(x.tradeSize)}
+      </td>
 
-          <div class="opp-route">
-            ${item.route || "—"}
-          </div>
+      <td>
+        ${money(x.expectedFinalValue)}
+      </td>
 
-        </div>
+      <td>
+        ${money(x.estimatedGasUsd)}
+      </td>
 
-        <div class="risk ${riskClass(item.riskLevel)}">
-          ${item.riskLevel || "—"} RISK
-          ·
-          ${item.riskScore ?? "—"}
-        </div>
+      <td class="${n >= 0 ? "pos" : "neg"}">
+        ${money(n)}
+      </td>
 
-      </div>
+      <td class="${roi >= 0 ? "pos" : "neg"}">
+        ${roi.toFixed(4)}%
+      </td>
 
-      <div class="opp-data">
+      <td class="risk ${risk}">
+        ${risk}
+        ${x.riskScore ?? ""}
+      </td>
 
-        <div class="data-box">
-          <div class="data-label">Trade Size</div>
-          <div class="data-value">
-            ${money(item.tradeSize)}
-          </div>
-        </div>
+      <td>
+        ${x.status || x.quoteStatus || "TESTED"}
+      </td>
 
-        <div class="data-box">
-          <div class="data-label">Expected Value</div>
-          <div class="data-value">
-            ${money(item.expectedFinalValue)}
-          </div>
-        </div>
+      <td>
 
-        <div class="data-box">
-          <div class="data-label">Gross Profit</div>
-          <div class="data-value ${Number(item.grossProfit) >= 0 ? "green" : "red"}">
-            ${money(item.grossProfit)}
-          </div>
-        </div>
+        ${
+          confirmed
+          ?
+          `
+          <button
+            class="action"
+            onclick="simulate('${x.id}')">
+            SIMULATE
+          </button>
+          `
+          :
+          ""
+        }
 
-        <div class="data-box">
-          <div class="data-label">Network Cost</div>
-          <div class="data-value">
-            ${money(item.estimatedGasUsd)}
-          </div>
-        </div>
+      </td>
 
-        <div class="data-box">
-          <div class="data-label">Estimated Net</div>
-          <div class="data-value ${net >= 0 ? "green" : "red"}">
-            ${money(net)}
-          </div>
-        </div>
-
-        <div class="data-box">
-          <div class="data-label">ROI</div>
-          <div class="data-value ${roi >= 0 ? "green" : "red"}">
-            ${roi.toFixed(4)}%
-          </div>
-        </div>
-
-      </div>
-
-      <div class="opp-footer">
-
-        <div class="quote-status">
-          ${item.status || "CONFIRMED"}
-          ·
-          Fresh quote
-          ${timeAgo(item.confirmedAt || item.testedAt)}
-        </div>
-
-        <button
-          class="sim-btn"
-          onclick="simulateTrade('${item.id}')"
-        >
-          SIMULATE TRADE
-        </button>
-
-      </div>
-
-    </div>
+    </tr>
   `;
 }
 
-function renderFeed(data){
+function render(o){
+
+  $("bal").textContent =
+    money(o.balance);
+
+  $("tests").textContent =
+    o.testsCompleted || 0;
+
+  $("cands").textContent =
+    o.candidatesFound || 0;
+
+  $("conf").textContent =
+    o.confirmedFound || 0;
+
+  const p =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        Number(
+          o.progressPercent || 0
+        )
+      )
+    );
+
+  $("bar").style.width =
+    p + "%";
+
+  $("phase").textContent =
+    (o.scanPhase || "IDLE") +
+    " · " +
+    p.toFixed(0) +
+    "%";
+
+  $("route").textContent =
+    o.currentRoute
+    ?
+    `${o.currentNetwork || ""} · ${o.currentRoute}`
+    :
+    o.running
+    ?
+    "Scanning market routes…"
+    :
+    "Scanner ready";
+
+  $("scan").disabled =
+    !!o.running;
+
+  $("scan").textContent =
+    o.running
+    ?
+    "SCANNING…"
+    :
+    "RUN MARKET SCAN";
+
+  $("curNet").textContent =
+    o.currentNetwork || "—";
+
+  $("quote").textContent =
+    ago(
+      o.lastSuccessfulQuote
+    );
+
+  $("rate").textContent =
+    o.rateLimited
+    ?
+    "YES"
+    :
+    "NO";
 
   const confirmed =
-    data.confirmed || [];
+    o.confirmed || [];
 
-  $("confirmedCount").textContent =
-    confirmed.length;
+  const tests =
+    o.bestTests || [];
 
-  $("feedSub").textContent =
+  const shown =
     confirmed.length
-    ? confirmed.length +
-      " CONFIRMED PAPER OPPORTUNITIES"
-    : data.lastScanCompleted
-      ? "SCAN COMPLETE · NO CONFIRMED ROUTES"
-      : "WAITING FOR FIRST SCAN";
+    ?
+    confirmed
+    :
+    tests;
 
-  if(confirmed.length){
+  $("rows").innerHTML =
+    shown
+    .map(
+      x =>
+      row(
+        x,
+        confirmed.some(
+          c =>
+          c.id === x.id
+        )
+      )
+    )
+    .join("");
 
-    $("opportunityFeed").innerHTML =
-      confirmed
-      .map(opportunityCard)
-      .join("");
+  $("empty").style.display =
+    shown.length
+    ?
+    "none"
+    :
+    "block";
 
-    return;
-  }
+  $("boardstate").textContent =
+    o.running
+    ?
+    `${o.testsCompleted || 0}/${o.testsPlanned || 0} TESTS`
+    :
+    o.lastScanCompleted
+    ?
+    confirmed.length
+    ?
+    confirmed.length +
+    " CONFIRMED"
+    :
+    "SCAN COMPLETE · 0 CONFIRMED"
+    :
+    "WAITING FOR SCAN";
 
-  const title =
-    data.running
-    ? "Live market scan in progress"
-    : data.lastScanCompleted
-      ? "No route passed confirmation"
-      : "Market scanner standing by";
+  $("best").innerHTML =
+    tests
+    .slice(0,6)
+    .map(
+      x =>
+      `
+      <div class="best">
 
-  const text =
-    data.running
-    ? "ArbiFlow is evaluating live routes and position sizes. Results will populate as the engine completes the scan."
-    : data.lastScanCompleted
-      ? "The latest scan did not find a route that passed the fresh re-quote and profitability threshold. No opportunity was fabricated."
-      : "Select your paper capital and start a live scan. ArbiFlow will test round-trip and triangular routes across the connected networks.";
+        <span>
+          ${x.network} · ${x.route}
+        </span>
 
-  $("opportunityFeed").innerHTML =
-    `
-      <div class="empty">
-
-        <div class="empty-inner">
-
-          <div class="radar"></div>
-
-          <strong>
-            ${title}
-          </strong>
-
-          <p>
-            ${text}
-          </p>
-
-        </div>
+        <b class="${
+          Number(x.estimatedNet) >= 0
+          ?
+          "pos"
+          :
+          "neg"
+        }">
+          ${money(x.estimatedNet)}
+        </b>
 
       </div>
+      `
+    )
+    .join("")
+    ||
+    `
+    <div class="mut">
+      No results yet.
+    </div>
+    `;
+
+  const logs = [];
+
+  if(o.running){
+
+    logs.push(
+      `
+      <div class="log">
+
+        <b>
+          Scanning ${o.currentNetwork || "markets"}.
+        </b>
+
+        <br>
+
+        ${o.currentRoute || o.scanPhase}
+
+      </div>
+      `
+    );
+  }
+
+  if(o.lastSuccessfulQuote){
+
+    logs.push(
+      `
+      <div class="log">
+
+        <b>
+          Live quote received.
+        </b>
+
+        <br>
+
+        ${ago(o.lastSuccessfulQuote)}
+
+      </div>
+      `
+    );
+  }
+
+  if(o.lastScanCompleted){
+
+    logs.push(
+      `
+      <div class="log">
+
+        <b>
+          Last scan completed.
+        </b>
+
+        <br>
+
+        ${ago(o.lastScanCompleted)}
+
+      </div>
+      `
+    );
+  }
+
+  $("log").innerHTML =
+    logs.join("")
+    ||
+    `
+    <div class="log">
+
+      <b>
+        Terminal ready.
+      </b>
+
+      <br>
+
+      Waiting for a market scan.
+
+    </div>
     `;
 }
 
-function renderTests(tests=[]){
-
-  const top =
-    tests.slice(0,7);
-
-  if(!top.length){
-
-    $("testList").innerHTML =
-      `
-        <div class="empty" style="min-height:170px">
-          <div class="empty-inner">
-            <strong>No route data yet</strong>
-            <p>Start a scan to populate live route tests.</p>
-          </div>
-        </div>
-      `;
-
-    return;
-  }
-
-  $("testList").innerHTML =
-    top.map(
-      item => {
-
-        const net =
-          Number(item.estimatedNet || 0);
-
-        return `
-          <div class="test-row">
-
-            <div class="test-top">
-
-              <div class="test-route">
-                ${item.network} · ${item.route}
-              </div>
-
-              <div class="test-net ${net >= 0 ? "green" : "red"}">
-                ${money(net)}
-              </div>
-
-            </div>
-
-            <div class="test-sub">
-              ${money(item.tradeSize)}
-              trade
-              ·
-              ${Number(item.roi || 0).toFixed(4)}%
-              ROI
-              ·
-              ${item.status || "TESTED"}
-            </div>
-
-          </div>
-        `;
-      }
-    ).join("");
-}
-
-function renderActivity(data){
-
-  const items = [];
-
-  if(data.running){
-
-    items.push(
-      `
-        <div class="activity-item">
-          <div class="activity-dot live"></div>
-          <div class="activity-text">
-            <b>Scanner active.</b><br>
-            ${data.scanPhase || "SCANNING"}
-            on
-            ${data.currentNetwork || "market routes"}.
-          </div>
-        </div>
-      `
-    );
-
-    if(data.currentRoute){
-
-      items.push(
-        `
-          <div class="activity-item">
-            <div class="activity-dot live"></div>
-            <div class="activity-text">
-              <b>Testing route.</b><br>
-              ${data.currentRoute}
-            </div>
-          </div>
-        `
-      );
-    }
-  }
-
-  if(data.lastSuccessfulQuote){
-
-    items.push(
-      `
-        <div class="activity-item">
-          <div class="activity-dot live"></div>
-          <div class="activity-text">
-            <b>Live quote received.</b><br>
-            ${timeAgo(data.lastSuccessfulQuote)}
-          </div>
-        </div>
-      `
-    );
-  }
-
-  if(data.lastScanCompleted){
-
-    items.push(
-      `
-        <div class="activity-item">
-          <div class="activity-dot"></div>
-          <div class="activity-text">
-            <b>Previous scan completed.</b><br>
-            ${timeAgo(data.lastScanCompleted)}
-          </div>
-        </div>
-      `
-    );
-  }
-
-  if(!items.length){
-
-    items.push(
-      `
-        <div class="activity-item">
-          <div class="activity-dot"></div>
-          <div class="activity-text">
-            <b>Terminal initialized.</b><br>
-            Waiting for live market scan.
-          </div>
-        </div>
-      `
-    );
-  }
-
-  $("activity").innerHTML =
-    items.join("");
-}
-
-async function loadStatus(){
+async function status(){
 
   try{
 
-    const status =
-      await api("/api/status");
+    const s =
+      await api(
+        "/api/status"
+      );
 
-    setEngineOnline(true);
+    $("engine").textContent =
+      "ENGINE ONLINE";
 
-    $("engineVersion").textContent =
-      status.version || "—";
+    $("engine")
+      .classList
+      .add("online");
 
-    $("provider").textContent =
-      status.provider || "—";
+    $("ver").textContent =
+      s.version || "—";
 
-    $("currentPhase").textContent =
-      status.scanPhase || "IDLE";
+    $("prov").textContent =
+      s.provider || "—";
 
-    $("currentNetwork").textContent =
-      status.currentNetwork || "—";
+    $("nets").innerHTML =
+      (s.networks || [])
+      .map(
+        n =>
+        `
+        <div class="net">
 
-    $("currentRoute").textContent =
-      status.currentRoute || "—";
+          <div class="nettop">
 
-    $("lastQuote").textContent =
-      timeAgo(status.lastSuccessfulQuote);
+            <span>
+              ${n.name}
+            </span>
 
-    $("rateLimited").textContent =
-      status.rateLimited
-      ? "YES"
-      : "NO";
+            <span class="dot"></span>
 
-    renderNetworks(
-      status.networks || []
-    );
+          </div>
 
-  }catch(error){
+          <div class="tokens">
+            ${(n.tokens || []).join(" · ")}
+          </div>
 
-    setEngineOnline(false);
+        </div>
+        `
+      )
+      .join("");
+  }
+  catch(e){
+
+    $("engine").textContent =
+      "ENGINE OFFLINE";
+
+    $("engine")
+      .classList
+      .remove("online");
   }
 }
 
@@ -1880,145 +1267,60 @@ async function refresh(){
   try{
 
     const [
-      opportunities,
-      account
+      o,
+      a
     ] =
       await Promise.all([
         api("/api/opportunities"),
         api("/api/account")
       ]);
 
-    $("balance").textContent =
-      money(account.balance);
-
-    $("capitalDisplay").textContent =
-      money(account.balance);
+    render(o);
 
     $("pnl").textContent =
-      money(account.realizedPnL);
+      money(
+        a.realizedPnL
+      );
 
     $("pnl").className =
-      "metric-value " +
+      "sv " +
       (
-        Number(account.realizedPnL) >= 0
-        ? "green"
-        : "red"
+        Number(a.realizedPnL) >= 0
+        ?
+        "pos"
+        :
+        "neg"
       );
 
-    $("routesTested").textContent =
-      number(opportunities.testsCompleted);
+    $("trades").textContent =
+      a.simulatedTrades || 0;
 
-    $("routesPlanned").textContent =
-      number(opportunities.testsPlanned) +
-      " planned";
+    $("bal").textContent =
+      money(a.balance);
 
-    $("candidateCount").textContent =
-      number(opportunities.candidatesFound);
-
-    $("confirmedCount").textContent =
-      number(opportunities.confirmedFound);
-
-    $("paperTrades").textContent =
-      number(account.simulatedTrades);
-
-    $("scanPhase").textContent =
-      opportunities.scanPhase || "IDLE";
-
-    $("currentPhase").textContent =
-      opportunities.scanPhase || "IDLE";
-
-    $("currentNetwork").textContent =
-      opportunities.currentNetwork || "—";
-
-    $("currentRoute").textContent =
-      opportunities.currentRoute || "—";
-
-    $("lastQuote").textContent =
-      timeAgo(opportunities.lastSuccessfulQuote);
-
-    $("rateLimited").textContent =
-      opportunities.rateLimited
-      ? "YES"
-      : "NO";
-
-    const progress =
-      Math.max(
-        0,
-        Math.min(
-          100,
-          Number(
-            opportunities.progressPercent || 0
-          )
+    document
+      .querySelectorAll(
+        "[data-c]"
+      )
+      .forEach(
+        b =>
+        b.classList.toggle(
+          "active",
+          Number(b.dataset.c) ===
+          Number(a.startingBalance)
         )
       );
+  }
+  catch(e){
 
-    $("scanProgress").style.width =
-      progress + "%";
-
-    $("scanProgressText").textContent =
-      progress.toFixed(0) + "%";
-
-    $("scanButton").disabled =
-      Boolean(opportunities.running);
-
-    $("scanButton").textContent =
-      opportunities.running
-      ? "SCANNING LIVE MARKETS..."
-      : "SCAN FOR OPPORTUNITIES";
-
-    if(opportunities.running){
-
-      $("scanMeta").textContent =
-        (
-          opportunities.testsCompleted || 0
-        ) +
-        " of " +
-        (
-          opportunities.testsPlanned || 0
-        ) +
-        " route tests completed";
-
-    }else if(opportunities.lastScanCompleted){
-
-      $("scanMeta").textContent =
-        "Last scan completed " +
-        timeAgo(
-          opportunities.lastScanCompleted
-        );
-
-    }else{
-
-      $("scanMeta").textContent =
-        "Engine ready. Start a live market scan.";
-    }
-
-    renderFeed(opportunities);
-
-    renderTests(
-      opportunities.bestTests || []
-    );
-
-    renderActivity(opportunities);
-
-  }catch(error){
-
-    $("scanMeta").textContent =
-      "Unable to read engine data: " +
-      error.message;
+    $("route").textContent =
+      e.message;
   }
 }
 
-async function startScan(){
+async function scan(){
 
   try{
-
-    $("scanButton").disabled = true;
-
-    $("scanButton").textContent =
-      "STARTING SCANNER...";
-
-    $("scanMeta").textContent =
-      "Requesting live market scan.";
 
     await api(
       "/api/scan/start",
@@ -2029,174 +1331,141 @@ async function startScan(){
     );
 
     await refresh();
+  }
+  catch(e){
 
-  }catch(error){
-
-    $("scanButton").disabled = false;
-
-    $("scanButton").textContent =
-      "SCAN FOR OPPORTUNITIES";
-
-    $("scanMeta").textContent =
-      error.message;
+    $("route").textContent =
+      e.message;
   }
 }
 
-async function changeCapital(amount){
+async function capital(v){
 
-  const value =
-    Number(amount);
+  v =
+    Number(v);
 
   if(
-    !Number.isFinite(value) ||
-    value < 10 ||
-    value > 1000000
+    !Number.isFinite(v) ||
+    v < 10 ||
+    v > 1000000
   ){
 
-    $("scanMeta").textContent =
-      "Enter paper capital between $10 and $1,000,000.";
+    $("route").textContent =
+      "Capital must be between $10 and $1,000,000.";
 
     return;
   }
 
   try{
 
-    const result =
-      await api(
-        "/api/account/capital",
-        {
-          method:"POST",
-          body:JSON.stringify({
-            amount:value
+    await api(
+      "/api/account/capital",
+      {
+        method:"POST",
+
+        body:
+          JSON.stringify({
+            amount:v
           })
-        }
-      );
+      }
+    );
 
-    document
-      .querySelectorAll(".cap-btn")
-      .forEach(
-        button => {
-
-          button.classList.toggle(
-            "active",
-            Number(button.dataset.cap) === value
-          );
-        }
-      );
-
-    $("customCapital").value = "";
-
-    $("scanMeta").textContent =
-      "Paper capital updated to " +
-      money(result.account.balance) +
-      ".";
+    $("custom").value =
+      "";
 
     await refresh();
+  }
+  catch(e){
 
-  }catch(error){
-
-    $("scanMeta").textContent =
-      error.message;
+    $("route").textContent =
+      e.message;
   }
 }
 
-async function simulateTrade(id){
+async function simulate(id){
 
-  const okay =
-    window.confirm(
-      "Simulate this paper opportunity with a fresh live quote? No real funds will move."
-    );
-
-  if(!okay){
+  if(
+    !confirm(
+      "Run a fresh paper simulation? No real funds will move."
+    )
+  ){
     return;
   }
 
   try{
 
-    $("scanMeta").textContent =
-      "Refreshing quote before paper simulation...";
-
-    const result =
+    const r =
       await api(
         "/api/paper/execute",
         {
           method:"POST",
-          body:JSON.stringify({
-            id
-          })
+
+          body:
+            JSON.stringify({
+              id
+            })
         }
       );
 
-    if(result.accepted){
-
-      $("scanMeta").textContent =
-        "Paper simulation completed. Virtual balance updated.";
-
-    }else{
-
-      $("scanMeta").textContent =
-        "Opportunity was rejected after the fresh quote.";
-    }
+    $("route").textContent =
+      r.accepted
+      ?
+      "Paper simulation completed."
+      :
+      "Rejected after fresh quote.";
 
     await refresh();
+  }
+  catch(e){
 
-  }catch(error){
-
-    $("scanMeta").textContent =
-      error.message;
+    $("route").textContent =
+      e.message;
   }
 }
 
-window.simulateTrade =
-  simulateTrade;
+window.simulate =
+  simulate;
 
-document
-  .querySelectorAll(".cap-btn")
-  .forEach(
-    button => {
+$("scan").onclick =
+  scan;
 
-      button.addEventListener(
-        "click",
-        () =>
-          changeCapital(
-            button.dataset.cap
-          )
-      );
-    }
+$("set").onclick =
+  () =>
+  capital(
+    $("custom").value
   );
 
-$("setCapital")
-  .addEventListener(
-    "click",
-    () =>
-      changeCapital(
-        $("customCapital").value
+document
+  .querySelectorAll(
+    "[data-c]"
+  )
+  .forEach(
+    b =>
+    b.onclick =
+      () =>
+      capital(
+        b.dataset.c
       )
   );
 
-$("scanButton")
-  .addEventListener(
-    "click",
-    startScan
-  );
+(async()=>{
 
-async function boot(){
+  await status();
 
-  await loadStatus();
   await refresh();
 
   setInterval(
-    async () => {
+    async()=>{
 
-      await loadStatus();
+      await status();
+
       await refresh();
 
     },
     4000
   );
-}
 
-boot();
+})();
 
 </script>
 
