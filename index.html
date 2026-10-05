@@ -1,22 +1,1243 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ArbiFlow Dashboard</title>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ArbiFlow Terminal 2.2</title>
+
 <style>
-:root{--bg:#07100d;--p:#0d1814;--p2:#101f19;--line:#20362c;--text:#f4f7f5;--muted:#8ea399;--green:#45e59a;--red:#ff7b7b;--amber:#f3c96b}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Arial}.wrap{max-width:1180px;margin:auto;padding:22px}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.brand{font-size:28px;font-weight:850}.brand b{color:var(--green)}.sub,.muted{color:var(--muted);font-size:12px}.badge{padding:9px 12px;border:1px solid var(--line);border-radius:99px;font-size:12px;font-weight:800}.live{color:var(--green)}.bad{color:var(--red)}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.card{background:linear-gradient(180deg,var(--p2),var(--p));border:1px solid var(--line);border-radius:16px;padding:17px}.label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.8px}.value{font-size:27px;font-weight:800;margin-top:7px}.section{margin-top:14px}.two{display:grid;grid-template-columns:1.35fr .65fr;gap:14px}h2{font-size:16px;margin:0 0 12px}.empty{text-align:center;padding:38px 15px;color:var(--muted)}.empty strong{display:block;color:var(--text);font-size:18px;margin-bottom:7px}.row{padding:13px 0;border-bottom:1px solid var(--line)}.row:last-child{border:0}.top{display:flex;justify-content:space-between;gap:10px;font-weight:700}.meta{color:var(--muted);font-size:12px;margin-top:6px;line-height:1.5}.kv{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}.kv span:first-child{color:var(--muted)}.pos{color:var(--green)}.neg{color:var(--red)}.history{overflow:auto}table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--muted)}@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}.wrap{padding:14px}.value{font-size:22px}}
-</style></head><body><div class="wrap">
-<header><div><div class="brand">Arbi<b>Flow</b></div><div class="sub">Opportunity Engine · Paper Trading</div></div><div id="badge" class="badge">CONNECTING</div></header>
-<div class="grid"><div class="card"><div class="label">Paper Balance</div><div id="balance" class="value">$500.00</div></div><div class="card"><div class="label">Paper P&amp;L</div><div id="pnl" class="value">$0.00</div></div><div class="card"><div class="label">Routes Tested</div><div id="tests" class="value">0</div></div><div class="card"><div class="label">Paper Trades</div><div id="trades" class="value">0</div></div></div>
-<div class="section two"><div class="card"><h2>Opportunity Feed</h2><div id="feed" class="empty"><strong>SCANNER CONNECTING</strong>Waiting for Engine 2.1.</div></div><div class="card"><h2>Engine</h2><div class="kv"><span>Version</span><span id="version">—</span></div><div class="kv"><span>Provider</span><span>0x Swap API</span></div><div class="kv"><span>Networks</span><span>Base · Arbitrum</span></div><div class="kv"><span>Mode</span><span>Paper Trading</span></div><div class="kv"><span>Cycle</span><span id="cycle">—</span></div><div class="kv"><span>Rate Limited</span><span id="rate">—</span></div><div class="kv"><span>Last Quote</span><span id="quote">—</span></div><div class="kv"><span>Best Tested Net</span><span id="best">—</span></div></div></div>
-<div class="section card"><h2>Best Current Tests</h2><div id="bestTests" class="empty"><strong>NO TEST RESULTS YET</strong>Waiting for scan results.</div></div>
-<div class="section card"><h2>Paper Trade History</h2><div id="history" class="empty"><strong>NO PAPER TRADES YET</strong>No route has passed confirmation and paper execution.</div></div>
-</div><script>
-const API="https://arbiflow-engine-v2.onrender.com";
-const $=id=>document.getElementById(id), money=n=>Number(n||0).toLocaleString("en-US",{style:"currency",currency:"USD",minimumFractionDigits:2,maximumFractionDigits:4}), esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])), tm=v=>v?new Date(v).toLocaleTimeString():"—";
-function paint(d,a){
- $("balance").textContent=money(d.balance??a.balance??500); let p=Number(d.realizedPnL??a.realizedPnL??0); $("pnl").textContent=(p>0?"+":"")+money(p); $("pnl").className="value "+(p>0?"pos":p<0?"neg":""); $("tests").textContent=Number(d.testsCompleted||0).toLocaleString(); $("trades").textContent=Number(d.simulatedTrades??a.simulatedTrades??0).toLocaleString(); $("version").textContent=d.version||"2.1.0"; $("cycle").textContent=d.cycle??"—"; $("rate").textContent=d.rateLimited?"YES":"NO"; $("quote").textContent=tm(d.lastSuccessfulQuote); $("badge").textContent=d.running?"LIVE SCANNING":"ENGINE ONLINE"; $("badge").className="badge live";
- let b=(d.bestTests||[])[0]; $("best").textContent=b?money(b.estimatedNet):"—"; $("best").className=b?(Number(b.estimatedNet)>=0?"pos":"neg"):"";
- let c=d.confirmed||[]; $("feed").className=c.length?"":"empty"; $("feed").innerHTML=c.length?c.map(x=>`<div class="row"><div class="top"><span>${esc(x.route)}</span><span class="pos">${money(x.estimatedNet)}</span></div><div class="meta">${esc(x.network)} · Size ${money(x.tradeSize)} · ROI ${Number(x.roi||0).toFixed(4)}% · CONFIRMED</div></div>`).join(""):"<strong>0 EXECUTABLE OPPORTUNITIES</strong>Scanner is active. No route currently meets the paper profitability and confirmation threshold.";
- let t=(d.bestTests||[]).slice(0,8); if(t.length){$("bestTests").className="";$("bestTests").innerHTML=t.map(x=>`<div class="row"><div class="top"><span>${esc(x.route)}</span><span class="${Number(x.estimatedNet)>=0?"pos":"neg"}">${money(x.estimatedNet)}</span></div><div class="meta">${esc(x.network)} · ${esc(x.routeType)} · Size ${money(x.tradeSize)} · Return ${money(x.estimatedReturn)} · ROI ${Number(x.roi||0).toFixed(4)}% · ${esc(x.status)}</div></div>`).join("")}
- let h=a.tradeHistory||[]; if(h.length){$("history").className="history";$("history").innerHTML=`<table><thead><tr><th>Route</th><th>Network</th><th>Size</th><th>Net</th><th>Balance After</th></tr></thead><tbody>${h.slice(0,20).map(x=>`<tr><td>${esc(x.route)}</td><td>${esc(x.network)}</td><td>${money(x.tradeSize)}</td><td class="${Number(x.estimatedNet)>=0?"pos":"neg"}">${money(x.estimatedNet)}</td><td>${money(x.balanceAfter)}</td></tr>`).join("")}</tbody></table>`}
+:root{
+  --bg:#050907;
+  --panel:#0b1210;
+  --panel2:#0f1915;
+  --line:#1d3028;
+  --text:#f5f8f6;
+  --muted:#84998f;
+  --green:#42e69a;
+  --green2:#1dbb78;
+  --red:#ff6f78;
+  --amber:#f2c45f;
+  --shadow:0 14px 40px rgba(0,0,0,.28)
 }
-async function refresh(){try{let [o,a]=await Promise.all([fetch(API+"/api/opportunities",{cache:"no-store"}),fetch(API+"/api/account",{cache:"no-store"})]);if(!o.ok||!a.ok)throw Error();paint(await o.json(),await a.json())}catch(e){$("badge").textContent="CONNECTION ERROR";$("badge").className="badge bad"}}
-refresh();setInterval(refresh,15000);
-</script></body></html>
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:radial-gradient(circle at 15% -10%,#11271e 0,transparent 32%),var(--bg);
+  color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif
+}
+
+.wrap{
+  max-width:1280px;
+  margin:auto;
+  padding:24px
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  align-items:center;
+  margin-bottom:18px
+}
+
+.brand{
+  font-size:30px;
+  font-weight:900;
+  letter-spacing:-1px
+}
+
+.brand span{color:var(--green)}
+
+.eyebrow{
+  color:var(--muted);
+  font-size:11px;
+  letter-spacing:1.2px;
+  text-transform:uppercase;
+  margin-top:3px
+}
+
+.status{
+  display:flex;
+  gap:9px;
+  align-items:center;
+  flex-wrap:wrap;
+  justify-content:flex-end
+}
+
+.pill{
+  border:1px solid var(--line);
+  background:#09110e;
+  border-radius:999px;
+  padding:8px 11px;
+  font-size:11px;
+  font-weight:800
+}
+
+.dot{
+  display:inline-block;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  margin-right:6px;
+  background:var(--muted)
+}
+
+.online .dot{
+  background:var(--green);
+  box-shadow:0 0 12px rgba(66,230,154,.7)
+}
+
+.panel{
+  background:linear-gradient(180deg,rgba(15,25,21,.96),rgba(8,15,12,.96));
+  border:1px solid var(--line);
+  border-radius:17px;
+  box-shadow:var(--shadow)
+}
+
+.controls{
+  display:grid;
+  grid-template-columns:1.4fr 1fr;
+  gap:14px;
+  padding:16px;
+  margin-bottom:14px
+}
+
+.control-title{
+  font-size:11px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  margin-bottom:10px
+}
+
+.capital-row,
+.scan-row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center
+}
+
+.cap{
+  border:1px solid var(--line);
+  background:#0a1310;
+  color:var(--text);
+  padding:10px 12px;
+  border-radius:10px;
+  font-weight:800;
+  cursor:pointer
+}
+
+.cap.active{
+  border-color:var(--green);
+  color:var(--green);
+  background:#0b1c15
+}
+
+.custom{
+  width:135px;
+  background:#07100d;
+  border:1px solid var(--line);
+  color:var(--text);
+  padding:10px;
+  border-radius:10px;
+  outline:none
+}
+
+.btn{
+  border:0;
+  border-radius:11px;
+  padding:12px 18px;
+  font-weight:900;
+  cursor:pointer;
+  letter-spacing:.2px
+}
+
+.btn-primary{
+  background:var(--green);
+  color:#02110a;
+  min-width:215px
+}
+
+.btn-primary:disabled{
+  opacity:.45;
+  cursor:not-allowed
+}
+
+.btn-dark{
+  background:#13221b;
+  color:var(--text);
+  border:1px solid var(--line)
+}
+
+.scan-copy{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.5
+}
+
+.progress{
+  height:7px;
+  background:#07100d;
+  border:1px solid var(--line);
+  border-radius:99px;
+  overflow:hidden;
+  margin-top:12px
+}
+
+.bar{
+  height:100%;
+  width:0;
+  background:linear-gradient(90deg,var(--green2),var(--green));
+  transition:width .35s
+}
+
+.metrics{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:10px;
+  margin-bottom:14px
+}
+
+.metric{padding:15px}
+
+.label{
+  font-size:10px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.9px
+}
+
+.value{
+  font-size:23px;
+  font-weight:900;
+  margin-top:6px;
+  letter-spacing:-.5px
+}
+
+.small{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:4px
+}
+
+.layout{
+  display:grid;
+  grid-template-columns:1.5fr .7fr;
+  gap:14px
+}
+
+.section{padding:16px}
+
+.section-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px
+}
+
+h2{
+  font-size:15px;
+  margin:0
+}
+
+.count{
+  font-size:11px;
+  color:var(--muted)
+}
+
+.opp{
+  border:1px solid var(--line);
+  background:#08110e;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:10px
+}
+
+.opp:last-child{margin-bottom:0}
+
+.opp-top{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start
+}
+
+.network{
+  font-size:11px;
+  color:var(--green);
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.8px
+}
+
+.route{
+  font-size:16px;
+  font-weight:850;
+  margin-top:4px;
+  word-break:break-word
+}
+
+.risk{
+  padding:6px 9px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:900;
+  white-space:nowrap;
+  border:1px solid var(--line)
+}
+
+.low{color:var(--green)}
+.medium{color:var(--amber)}
+.high{color:var(--red)}
+
+.opp-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;
+  margin-top:13px
+}
+
+.datum{
+  background:#0c1713;
+  border:1px solid #16271f;
+  border-radius:10px;
+  padding:9px
+}
+
+.datum b{
+  display:block;
+  font-size:13px;
+  margin-top:3px
+}
+
+.datum span{
+  font-size:9px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.6px
+}
+
+.positive{color:var(--green)}
+.negative{color:var(--red)}
+
+.opp-foot{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+  margin-top:11px
+}
+
+.quote{
+  font-size:10px;
+  color:var(--muted)
+}
+
+.simulate{
+  padding:8px 11px;
+  font-size:11px
+}
+
+.kv{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 0;
+  border-bottom:1px solid var(--line);
+  font-size:12px
+}
+
+.kv:last-child{border:0}
+
+.kv span:first-child{color:var(--muted)}
+
+.nets{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-top:10px
+}
+
+.net{
+  font-size:10px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:6px 8px;
+  color:#b8c8c0
+}
+
+.empty{
+  text-align:center;
+  padding:44px 15px;
+  color:var(--muted)
+}
+
+.empty strong{
+  display:block;
+  color:var(--text);
+  font-size:18px;
+  margin-bottom:7px
+}
+
+.notice{
+  font-size:11px;
+  line-height:1.55;
+  color:var(--muted);
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:#08100d;
+  margin-top:12px
+}
+
+.err{color:var(--red)}
+
+@media(max-width:980px){
+  .metrics{grid-template-columns:repeat(3,1fr)}
+  .layout,.controls{grid-template-columns:1fr}
+  .opp-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+@media(max-width:560px){
+  .wrap{padding:12px}
+  .header{align-items:flex-start}
+  .brand{font-size:26px}
+  .status{justify-content:flex-start}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .value{font-size:20px}
+  .btn-primary{width:100%}
+  .opp-grid{grid-template-columns:1fr 1fr}
+  .controls,.section{padding:13px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<div class="header">
+  <div>
+    <div class="brand">Arbi<span>Flow</span></div>
+    <div class="eyebrow">
+      Opportunity Terminal 2.2 · Paper Trading
+    </div>
+  </div>
+
+  <div class="status">
+    <div id="enginePill" class="pill">
+      <span class="dot"></span>
+      <span id="engineText">CONNECTING</span>
+    </div>
+
+    <div class="pill" id="phasePill">IDLE</div>
+  </div>
+</div>
+
+<div class="panel controls">
+
+  <div>
+    <div class="control-title">Paper Capital</div>
+
+    <div class="capital-row">
+      <button class="cap active" data-cap="500">$500</button>
+      <button class="cap" data-cap="1000">$1,000</button>
+      <button class="cap" data-cap="2500">$2,500</button>
+      <button class="cap" data-cap="5000">$5,000</button>
+      <button class="cap" data-cap="10000">$10,000</button>
+
+      <input
+        id="customCapital"
+        class="custom"
+        type="number"
+        min="10"
+        max="1000000"
+        placeholder="Custom amount"
+      >
+
+      <button id="setCustom" class="cap">SET</button>
+    </div>
+  </div>
+
+  <div>
+    <div class="control-title">Opportunity Scanner</div>
+
+    <div class="scan-row">
+      <button id="scanBtn" class="btn btn-primary">
+        SCAN FOR OPPORTUNITIES
+      </button>
+
+      <div class="scan-copy">
+        <span id="scanStatus">
+          Ready for a live market scan.
+        </span>
+      </div>
+    </div>
+
+    <div class="progress">
+      <div id="progressBar" class="bar"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="metrics">
+
+  <div class="panel metric">
+    <div class="label">Paper Balance</div>
+    <div class="value" id="balance">$500.00</div>
+    <div class="small">Virtual capital</div>
+  </div>
+
+  <div class="panel metric">
+    <div class="label">Realized P&amp;L</div>
+    <div class="value" id="pnl">$0.00</div>
+    <div class="small">Paper results</div>
+  </div>
+
+  <div class="panel metric">
+    <div class="label">Routes Tested</div>
+    <div class="value" id="tested">0</div>
+    <div class="small" id="planned">0 planned</div>
+  </div>
+
+  <div class="panel metric">
+    <div class="label">Candidates</div>
+    <div class="value" id="candidates">0</div>
+    <div class="small">Positive after estimates</div>
+  </div>
+
+  <div class="panel metric">
+    <div class="label">Confirmed</div>
+    <div class="value" id="confirmed">0</div>
+    <div class="small">Fresh re-quote passed</div>
+  </div>
+
+  <div class="panel metric">
+    <div class="label">Paper Trades</div>
+    <div class="value" id="trades">0</div>
+    <div class="small">Simulated only</div>
+  </div>
+
+</div>
+
+<div class="layout">
+
+<div class="panel section">
+
+  <div class="section-head">
+    <h2>Opportunity Feed</h2>
+    <div class="count" id="feedCount">
+      0 confirmed opportunities
+    </div>
+  </div>
+
+  <div id="feed">
+    <div class="empty">
+      <strong>No confirmed opportunities yet</strong>
+      Choose your paper capital and press
+      <b>SCAN FOR OPPORTUNITIES</b>.
+    </div>
+  </div>
+
+</div>
+
+<div>
+
+<div class="panel section">
+
+  <div class="section-head">
+    <h2>Engine</h2>
+    <div class="count">LIVE DATA</div>
+  </div>
+
+  <div class="kv">
+    <span>Version</span>
+    <b id="version">—</b>
+  </div>
+
+  <div class="kv">
+    <span>Provider</span>
+    <b id="provider">—</b>
+  </div>
+
+  <div class="kv">
+    <span>Scan phase</span>
+    <b id="phase">IDLE</b>
+  </div>
+
+  <div class="kv">
+    <span>Progress</span>
+    <b id="progressText">0%</b>
+  </div>
+
+  <div class="kv">
+    <span>Current network</span>
+    <b id="currentNetwork">—</b>
+  </div>
+
+  <div class="kv">
+    <span>Current route</span>
+    <b id="currentRoute">—</b>
+  </div>
+
+  <div class="kv">
+    <span>Last live quote</span>
+    <b id="lastQuote">—</b>
+  </div>
+
+  <div class="control-title" style="margin-top:14px">
+    Networks
+  </div>
+
+  <div id="networks" class="nets"></div>
+
+  <div class="notice">
+    Paper mode uses live quote data but does not submit blockchain
+    transactions. A confirmed paper opportunity is not the same as
+    a guaranteed or real-world executable profit.
+  </div>
+
+</div>
+
+<div class="panel section" style="margin-top:14px">
+
+  <div class="section-head">
+    <h2>Best Current Tests</h2>
+    <div class="count">TOP 5</div>
+  </div>
+
+  <div id="best">
+    <div class="empty" style="padding:22px 8px">
+      No scan results yet.
+    </div>
+  </div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+const API =
+  'https://arbiflow-engine-v2.onrender.com';
+
+const $ = id =>
+  document.getElementById(id);
+
+let polling = null;
+let lastRunning = false;
+
+const money = n =>
+  new Intl.NumberFormat(
+    'en-US',
+    {
+      style:'currency',
+      currency:'USD',
+      minimumFractionDigits:2,
+      maximumFractionDigits:4
+    }
+  ).format(Number(n || 0));
+
+const num = n =>
+  new Intl.NumberFormat('en-US')
+    .format(Number(n || 0));
+
+const age = s => {
+
+  if(!s) return '—';
+
+  const d =
+    Math.max(
+      0,
+      Date.now() -
+      new Date(s).getTime()
+    );
+
+  if(d < 60000)
+    return Math.floor(d / 1000) + 's ago';
+
+  if(d < 3600000)
+    return Math.floor(d / 60000) + 'm ago';
+
+  return new Date(s).toLocaleString();
+};
+
+async function request(path,opt={}) {
+
+  const r =
+    await fetch(
+      API + path,
+      {
+        headers:{
+          'Content-Type':'application/json',
+          ...(opt.headers || {})
+        },
+        ...opt
+      }
+    );
+
+  let j = {};
+
+  try {
+    j = await r.json();
+  } catch {}
+
+  if(!r.ok)
+    throw new Error(
+      j.message ||
+      ('Request failed: ' + r.status)
+    );
+
+  return j;
+}
+
+function riskClass(v) {
+  return String(v || '').toLowerCase();
+}
+
+function card(x) {
+
+  return `
+  <div class="opp">
+
+    <div class="opp-top">
+
+      <div>
+        <div class="network">
+          ${x.network || '—'} ·
+          ${x.routeType || 'ROUTE'}
+        </div>
+
+        <div class="route">
+          ${x.route || '—'}
+        </div>
+      </div>
+
+      <div class="risk ${riskClass(x.riskLevel)}">
+        ${x.riskLevel || '—'} RISK ·
+        ${x.riskScore ?? '—'}
+      </div>
+
+    </div>
+
+    <div class="opp-grid">
+
+      <div class="datum">
+        <span>Trade Size</span>
+        <b>${money(x.tradeSize)}</b>
+      </div>
+
+      <div class="datum">
+        <span>Expected Value</span>
+        <b>${money(x.expectedFinalValue)}</b>
+      </div>
+
+      <div class="datum">
+        <span>Gas / Network</span>
+        <b>${money(x.estimatedGasUsd)}</b>
+      </div>
+
+      <div class="datum">
+        <span>Estimated Net</span>
+        <b class="${
+          Number(x.estimatedNet) >= 0
+            ? 'positive'
+            : 'negative'
+        }">
+          ${money(x.estimatedNet)}
+        </b>
+      </div>
+
+      <div class="datum">
+        <span>ROI</span>
+
+        <b class="${
+          Number(x.roi) >= 0
+            ? 'positive'
+            : 'negative'
+        }">
+
+          ${Number(x.roi || 0).toFixed(4)}%
+
+        </b>
+      </div>
+
+    </div>
+
+    <div class="opp-foot">
+
+      <div class="quote">
+
+        ${
+          x.status ||
+          x.quoteStatus ||
+          'QUOTED'
+        }
+
+        · quote
+
+        ${
+          age(
+            x.confirmedAt ||
+            x.testedAt
+          )
+        }
+
+      </div>
+
+      ${
+        x.status === 'CONFIRMED'
+        ?
+        `
+        <button
+          class="btn btn-dark simulate"
+          onclick="simulate('${x.id}')"
+        >
+          SIMULATE TRADE
+        </button>
+        `
+        :
+        ''
+      }
+
+    </div>
+
+  </div>
+  `;
+}
+
+function bestRow(x) {
+
+  return `
+    <div class="kv">
+
+      <span>
+        ${x.network} · ${x.route}
+      </span>
+
+      <b class="${
+        Number(x.estimatedNet) >= 0
+          ? 'positive'
+          : 'negative'
+      }">
+
+        ${money(x.estimatedNet)}
+
+      </b>
+
+    </div>
+  `;
+}
+
+async function loadStatus() {
+
+  try {
+
+    const s =
+      await request('/api/status');
+
+    $('enginePill')
+      .classList.add('online');
+
+    $('engineText').textContent =
+      'ENGINE ONLINE';
+
+    $('version').textContent =
+      s.version || '—';
+
+    $('provider').textContent =
+      s.provider || '—';
+
+    $('phase').textContent =
+      s.scanPhase || 'IDLE';
+
+    $('phasePill').textContent =
+      s.scanPhase || 'IDLE';
+
+    $('currentNetwork').textContent =
+      s.currentNetwork || '—';
+
+    $('currentRoute').textContent =
+      s.currentRoute || '—';
+
+    $('lastQuote').textContent =
+      age(s.lastSuccessfulQuote);
+
+    $('networks').innerHTML =
+      (s.networks || [])
+      .map(
+        n =>
+        `<span class="net">${n.name}</span>`
+      )
+      .join('');
+
+  } catch(e) {
+
+    $('enginePill')
+      .classList.remove('online');
+
+    $('engineText').textContent =
+      'ENGINE UNAVAILABLE';
+  }
+}
+
+async function refresh() {
+
+  try {
+
+    const [o,a] =
+      await Promise.all([
+        request('/api/opportunities'),
+        request('/api/account')
+      ]);
+
+    $('balance').textContent =
+      money(a.balance);
+
+    $('pnl').textContent =
+      money(a.realizedPnL);
+
+    $('pnl').className =
+      'value ' +
+      (
+        Number(a.realizedPnL) >= 0
+          ? 'positive'
+          : 'negative'
+      );
+
+    $('trades').textContent =
+      num(a.simulatedTrades);
+
+    $('tested').textContent =
+      num(o.testsCompleted);
+
+    $('planned').textContent =
+      num(o.testsPlanned) +
+      ' planned';
+
+    $('candidates').textContent =
+      num(o.candidatesFound);
+
+    $('confirmed').textContent =
+      num(o.confirmedFound);
+
+    $('phase').textContent =
+      o.scanPhase || 'IDLE';
+
+    $('phasePill').textContent =
+      o.scanPhase || 'IDLE';
+
+    $('progressText').textContent =
+      Number(
+        o.progressPercent || 0
+      ).toFixed(0) + '%';
+
+    $('progressBar').style.width =
+      Math.max(
+        0,
+        Math.min(
+          100,
+          Number(
+            o.progressPercent || 0
+          )
+        )
+      ) + '%';
+
+    $('currentNetwork').textContent =
+      o.currentNetwork || '—';
+
+    $('currentRoute').textContent =
+      o.currentRoute || '—';
+
+    $('lastQuote').textContent =
+      age(o.lastSuccessfulQuote);
+
+    $('scanBtn').disabled =
+      !!o.running;
+
+    $('scanBtn').textContent =
+      o.running
+      ? 'SCANNING LIVE MARKETS…'
+      : 'SCAN FOR OPPORTUNITIES';
+
+    $('scanStatus').textContent =
+      o.running
+      ?
+      `${
+        o.scanPhase || 'SCANNING'
+      } · ${
+        o.testsCompleted || 0
+      } of ${
+        o.testsPlanned || 0
+      } tests completed`
+      :
+      (
+        o.lastScanCompleted
+        ?
+        'Last scan completed ' +
+        age(o.lastScanCompleted)
+        :
+        'Ready for a live market scan.'
+      );
+
+    const list =
+      (o.confirmed || []);
+
+    $('feedCount').textContent =
+      list.length +
+      ' confirmed opportunit' +
+      (
+        list.length === 1
+          ? 'y'
+          : 'ies'
+      );
+
+    $('feed').innerHTML =
+      list.length
+      ?
+      list.map(card).join('')
+      :
+      `
+      <div class="empty">
+
+        <strong>
+          ${
+            o.lastScanCompleted
+            ?
+            '0 CONFIRMED OPPORTUNITIES'
+            :
+            'No confirmed opportunities yet'
+          }
+        </strong>
+
+        ${
+          o.lastScanCompleted
+          ?
+          'The last live scan did not find a route that passed the fresh re-quote threshold. No opportunity was fabricated.'
+          :
+          'Choose your paper capital and press <b>SCAN FOR OPPORTUNITIES</b>.'
+        }
+
+      </div>
+      `;
+
+    const best =
+      (o.bestTests || [])
+      .slice(0,5);
+
+    $('best').innerHTML =
+      best.length
+      ?
+      best.map(bestRow).join('')
+      :
+      `
+      <div
+        class="empty"
+        style="padding:22px 8px"
+      >
+        No scan results yet.
+      </div>
+      `;
+
+    if(
+      lastRunning &&
+      !o.running
+    )
+      await loadStatus();
+
+    lastRunning =
+      !!o.running;
+
+  } catch(e) {
+
+    $('scanStatus').innerHTML =
+      '<span class="err">' +
+      e.message +
+      '</span>';
+  }
+}
+
+async function setCapital(amount) {
+
+  try {
+
+    const r =
+      await request(
+        '/api/account/capital',
+        {
+          method:'POST',
+
+          body:JSON.stringify({
+            amount:Number(amount)
+          })
+        }
+      );
+
+    document
+      .querySelectorAll(
+        '.cap[data-cap]'
+      )
+      .forEach(
+        b =>
+        b.classList.toggle(
+          'active',
+          Number(b.dataset.cap) ===
+          Number(amount)
+        )
+      );
+
+    $('customCapital').value = '';
+
+    await refresh();
+
+    $('scanStatus').textContent =
+      'Paper capital set to ' +
+      money(r.account.balance) +
+      '. Ready to scan.';
+
+  } catch(e) {
+
+    $('scanStatus').innerHTML =
+      '<span class="err">' +
+      e.message +
+      '</span>';
+  }
+}
+
+async function startScan() {
+
+  try {
+
+    $('scanBtn').disabled = true;
+
+    $('scanStatus').textContent =
+      'Starting live market scan…';
+
+    await request(
+      '/api/scan/start',
+      {
+        method:'POST',
+        body:'{}'
+      }
+    );
+
+    await refresh();
+
+  } catch(e) {
+
+    $('scanBtn').disabled = false;
+
+    $('scanStatus').innerHTML =
+      '<span class="err">' +
+      e.message +
+      '</span>';
+  }
+}
+
+async function simulate(id) {
+
+  try {
+
+    if(
+      !confirm(
+        'Simulate this paper trade using a fresh live quote? No real funds will move.'
+      )
+    )
+      return;
+
+    const r =
+      await request(
+        '/api/paper/execute',
+        {
+          method:'POST',
+
+          body:JSON.stringify({
+            id
+          })
+        }
+      );
+
+    $('scanStatus').textContent =
+      r.accepted
+      ?
+      'Paper trade simulated. Balance updated.'
+      :
+      'Paper trade rejected after fresh quote.';
+
+    await refresh();
+
+  } catch(e) {
+
+    $('scanStatus').innerHTML =
+      '<span class="err">' +
+      e.message +
+      '</span>';
+  }
+}
+
+window.simulate = simulate;
+
+document
+  .querySelectorAll(
+    '.cap[data-cap]'
+  )
+  .forEach(
+    b =>
+    b.addEventListener(
+      'click',
+      () =>
+      setCapital(
+        b.dataset.cap
+      )
+    )
+  );
+
+$('setCustom')
+  .addEventListener(
+    'click',
+    () =>
+    setCapital(
+      $('customCapital').value
+    )
+  );
+
+$('scanBtn')
+  .addEventListener(
+    'click',
+    startScan
+  );
+
+async function boot() {
+
+  await loadStatus();
+
+  await refresh();
+
+  polling =
+    setInterval(
+      async() => {
+
+        await loadStatus();
+
+        await refresh();
+
+      },
+      4000
+    );
+}
+
+boot();
+
+</script>
+
+</body>
+</html>
