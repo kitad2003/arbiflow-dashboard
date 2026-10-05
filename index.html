@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ArbiFlow | Live Arbitrage Scanner</title>
+
+<style>
+:root {
+  --bg:#070b0d;
+  --panel:#0d1316;
+  --panel2:#11191c;
+  --border:#1d2a2f;
+  --green:#35e58b;
+  --green2:#18b96b;
+  --text:#f4f7f6;
+  --muted:#839095;
+  --red:#ff6b72;
+  --amber:#f3c969;
+}
+
+* {
+  box-sizing:border-box;
+}
+
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+.shell {
+  max-width:1200px;
+  margin:auto;
+  padding:28px;
+}
+
+header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  margin-bottom:28px;
+}
+
+.logo {
+  font-size:32px;
+  font-weight:800;
+  letter-spacing:-1px;
+}
+
+.logo span {
+  color:var(--green);
+}
+
+.subtitle {
+  margin-top:4px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.liveBadge {
+  border:1px solid #24553d;
+  background:#0b1812;
+  color:var(--green);
+  padding:10px 15px;
+  border-radius:100px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.stats {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+
+.card {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:20px;
+}
+
+.label {
+  font-size:11px;
+  letter-spacing:1.2px;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+.number {
+  margin-top:9px;
+  font-size:28px;
+  font-weight:800;
+}
+
+.green {
+  color:var(--green);
+}
+
+.red {
+  color:var(--red);
+}
+
+.amber {
+  color:var(--amber);
+}
+
+.panel {
+  margin-top:16px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:17px;
+  overflow:hidden;
+}
+
+.panelHead {
+  padding:20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  border-bottom:1px solid var(--border);
+}
+
+.panelTitle {
+  font-size:18px;
+  font-weight:700;
+  margin-top:5px;
+}
+
+.statusText {
+  color:var(--muted);
+  font-size:12px;
+  text-align:right;
+}
+
+.empty {
+  padding:48px 20px;
+  text-align:center;
+  color:var(--muted);
+}
+
+.empty strong {
+  display:block;
+  color:var(--text);
+  font-size:22px;
+  margin-bottom:8px;
+}
+
+.tableHead,
+.testRow {
+  display:grid;
+  grid-template-columns:1fr 2.2fr .8fr .9fr .8fr;
+  gap:12px;
+  align-items:center;
+}
+
+.tableHead {
+  padding:11px 16px;
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  border-bottom:1px solid var(--border);
+}
+
+.testRow {
+  margin:10px 14px;
+  padding:14px;
+  background:#090e10;
+  border:1px solid #182328;
+  border-radius:11px;
+  font-size:13px;
+}
+
+.network {
+  font-weight:bold;
+}
+
+.route {
+  color:#cbd3d1;
+}
+
+.bottom {
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:14px;
+  margin-top:16px;
+}
+
+.smallValue {
+  margin-top:8px;
+  font-size:16px;
+  font-weight:bold;
+}
+
+.notice {
+  margin-top:18px;
+  color:#647176;
+  font-size:11px;
+  line-height:1.6;
+}
+
+@media(max-width:800px) {
+  .stats {
+    grid-template-columns:1fr 1fr;
+  }
+
+  .bottom {
+    grid-template-columns:1fr;
+  }
+
+  .tableHead {
+    display:none;
+  }
+
+  .testRow {
+    grid-template-columns:1fr 1fr;
+  }
+
+  .route {
+    grid-column:1 / -1;
+  }
+}
+
+@media(max-width:480px) {
+  .shell {
+    padding:16px;
+  }
+
+  header {
+    align-items:flex-start;
+  }
+
+  .stats {
+    grid-template-columns:1fr 1fr;
+  }
+
+  .number {
+    font-size:23px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="shell">
+
+<header>
+
+<div>
+  <div class="logo">Arbi<span>Flow</span></div>
+  <div class="subtitle">
+    Live Market Arbitrage Engine • Paper Mode
+  </div>
+</div>
+
+<div id="scannerBadge" class="liveBadge">
+  CONNECTING
+</div>
+
+</header>
+
+
+<section class="stats">
+
+<div class="card">
+  <div class="label">Paper Balance</div>
+  <div id="balance" class="number">$500.00</div>
+</div>
+
+<div class="card">
+  <div class="label">Paper P&amp;L</div>
+  <div id="pnl" class="number">$0.00</div>
+</div>
+
+<div class="card">
+  <div class="label">Tests Completed</div>
+  <div id="tests" class="number">0</div>
+</div>
+
+<div class="card">
+  <div class="label">Candidates Found</div>
+  <div id="candidateCount" class="number green">0</div>
+</div>
+
+</section>
+
+
+<section class="panel">
+
+<div class="panelHead">
+
+<div>
+  <div class="label">Opportunity Engine</div>
+  <div class="panelTitle">
+    Live Market Opportunities
+  </div>
+</div>
+
+<div>
+  <div id="cycle" class="statusText">
+    Cycle 0
+  </div>
+
+  <div id="quoteTime" class="statusText">
+    Waiting for market data
+  </div>
+</div>
+
+</div>
+
+
+<div id="opportunityArea" class="empty">
+
+<strong>0 EXECUTABLE OPPORTUNITIES</strong>
+
+ArbiFlow is scanning live markets.
+Nothing is promoted as executable unless it passes the required confirmation stages.
+
+</div>
+
+</section>
+
+
+<section class="panel">
+
+<div class="panelHead">
+
+<div>
+  <div class="label">Scanner Intelligence</div>
+  <div class="panelTitle">
+    Best Current Route Tests
+  </div>
+</div>
+
+<div id="marketStatus" class="statusText">
+  Connecting to scanner...
+</div>
+
+</div>
+
+
+<div class="tableHead">
+  <div>Network</div>
+  <div>Route</div>
+  <div>Size</div>
+  <div>Net</div>
+  <div>ROI</div>
+</div>
+
+<div id="results">
+
+<div class="empty">
+Waiting for completed live tests...
+</div>
+
+</div>
+
+</section>
+
+
+<section class="bottom">
+
+<div class="card">
+  <div class="label">Networks</div>
+  <div class="smallValue">
+    Base • Arbitrum
+  </div>
+</div>
+
+<div class="card">
+  <div class="label">Scanner Mode</div>
+  <div class="smallValue">
+    Live Quotes • Paper Trading
+  </div>
+</div>
+
+<div class="card">
+  <div class="label">Provider</div>
+  <div class="smallValue">
+    0x Swap API
+  </div>
+</div>
+
+</section>
+
+
+<div id="systemNotice" class="notice">
+Connecting to the ArbiFlow live scanner...
+</div>
+
+</div>
+
+
+<script>
+
+const API =
+  "https://arbiflow-scanner.onrender.com";
+
+function money(value) {
+
+  const number =
+    Number(value) || 0;
+
+  return number.toLocaleString(
+    "en-US",
+    {
+      style:"currency",
+      currency:"USD"
+    }
+  );
+}
+
+function percent(value) {
+
+  return (
+    (Number(value) || 0)
+      .toFixed(4) +
+    "%"
+  );
+}
+
+function escapeHTML(value) {
+
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+async function getJSON(path) {
+
+  const response =
+    await fetch(
+      API + path,
+      {
+        cache:"no-store"
+      }
+    );
+
+  if (!response.ok) {
+    throw new Error(
+      "Scanner returned HTTP " +
+      response.status
+    );
+  }
+
+  return response.json();
+}
+
+
+async function refreshDashboard() {
+
+  const badge =
+    document.getElementById(
+      "scannerBadge"
+    );
+
+  try {
+
+    const [account,data] =
+      await Promise.all([
+        getJSON("/api/account"),
+        getJSON("/api/opportunities")
+      ]);
+
+
+    document.getElementById(
+      "balance"
+    ).textContent =
+      money(account.balance);
+
+
+    const pnl =
+      Number(
+        account.realizedPnL
+      ) || 0;
+
+    const pnlElement =
+      document.getElementById(
+        "pnl"
+      );
+
+    pnlElement.textContent =
+      money(pnl);
+
+    pnlElement.className =
+      "number " +
+      (
+        pnl > 0
+          ? "green"
+          : pnl < 0
+            ? "red"
+            : ""
+      );
+
+
+    document.getElementById(
+      "tests"
+    ).textContent =
+      data.testsCompleted || 0;
+
+
+    document.getElementById(
+      "candidateCount"
+    ).textContent =
+      data.candidatesFound || 0;
+
+
+    document.getElementById(
+      "cycle"
+    ).textContent =
+      "Cycle " +
+      (data.cycle || 0);
+
+
+    if (data.scannerRunning) {
+
+      badge.textContent =
+        "● LIVE SCANNING";
+
+    } else {
+
+      badge.textContent =
+        "● BETWEEN SCANS";
+    }
+
+
+    if (data.lastSuccessfulQuote) {
+
+      const time =
+        new Date(
+          data.lastSuccessfulQuote
+        );
+
+      document.getElementById(
+        "quoteTime"
+      ).textContent =
+        "Last quote " +
+        time.toLocaleTimeString();
+
+    } else {
+
+      document.getElementById(
+        "quoteTime"
+      ).textContent =
+        "Waiting for live quote";
+    }
+
+
+    const status =
+      document.getElementById(
+        "marketStatus"
+      );
+
+    if (data.rateLimited) {
+
+      status.textContent =
+        "Rate limit protection active";
+
+      status.className =
+        "statusText amber";
+
+    } else {
+
+      status.textContent =
+        "Live scanner connected";
+
+      status.className =
+        "statusText green";
+    }
+
+
+    const opportunities =
+      Array.isArray(
+        data.opportunities
+      )
+        ? data.opportunities
+        : [];
+
+
+    const opportunityArea =
+      document.getElementById(
+        "opportunityArea"
+      );
+
+
+    if (opportunities.length === 0) {
+
+      opportunityArea.className =
+        "empty";
+
+      opportunityArea.innerHTML =
+        "<strong>0 EXECUTABLE OPPORTUNITIES</strong>" +
+        "No profitable candidate is currently being promoted as executable. " +
+        "Live scanning continues automatically.";
+
+    } else {
+
+      opportunityArea.className =
+        "";
+
+      opportunityArea.innerHTML =
+        opportunities
+          .map((item) => {
+
+            return (
+              '<div class="testRow">' +
+
+              '<div class="network">' +
+              escapeHTML(
+                item.network
+              ) +
+              "</div>" +
+
+              '<div class="route">' +
+              escapeHTML(
+                item.route
+              ) +
+              "</div>" +
+
+              "<div>" +
+              money(
+                item.tradeSize
+              ) +
+              "</div>" +
+
+              '<div class="green">' +
+              money(
+                item.estimatedNet
+              ) +
+              "</div>" +
+
+              '<div class="green">' +
+              percent(
+                item.roi
+              ) +
+              "</div>" +
+
+              "</div>"
+            );
+
+          })
+          .join("");
+    }
+
+
+    const tests =
+      Array.isArray(
+        data.bestTests
+      )
+        ? data.bestTests
+        : [];
+
+
+    const results =
+      document.getElementById(
+        "results"
+      );
+
+
+    if (tests.length === 0) {
+
+      results.innerHTML =
+        '<div class="empty">' +
+        "Waiting for completed live tests..." +
+        "</div>";
+
+    } else {
+
+      results.innerHTML =
+        tests
+          .slice(0,8)
+          .map((item) => {
+
+            const positive =
+              Number(
+                item.estimatedNet
+              ) > 0;
+
+            return (
+              '<div class="testRow">' +
+
+              '<div class="network">' +
+              escapeHTML(
+                item.network
+              ) +
+              "</div>" +
+
+              '<div class="route">' +
+              escapeHTML(
+                item.route
+              ) +
+              "</div>" +
+
+              "<div>" +
+              money(
+                item.tradeSize
+              ) +
+              "</div>" +
+
+              '<div class="' +
+              (
+                positive
+                  ? "green"
+                  : "red"
+              ) +
+              '">' +
+
+              money(
+                item.estimatedNet
+              ) +
+
+              "</div>" +
+
+              '<div class="' +
+              (
+                positive
+                  ? "green"
+                  : "red"
+              ) +
+              '">' +
+
+              percent(
+                item.roi
+              ) +
+
+              "</div>" +
+
+              "</div>"
+            );
+
+          })
+          .join("");
+    }
+
+
+    const errors =
+      Array.isArray(
+        data.errors
+      )
+        ? data.errors
+        : [];
+
+
+    document.getElementById(
+      "systemNotice"
+    ).textContent =
+      errors.length
+        ? (
+          "Scanner reported " +
+          errors.length +
+          " notice(s) during the latest cycle."
+        )
+        : (
+          "Scanner connected • " +
+          (data.routesExamined || 0) +
+          " route tests scheduled • " +
+          (data.testsCompleted || 0) +
+          " completed • No scanner errors"
+        );
+
+  } catch (error) {
+
+    badge.textContent =
+      "● CONNECTION ERROR";
+
+    document.getElementById(
+      "marketStatus"
+    ).textContent =
+      "Scanner connection unavailable";
+
+    document.getElementById(
+      "systemNotice"
+    ).textContent =
+      "Dashboard could not reach the scanner: " +
+      error.message;
+  }
+}
+
+
+refreshDashboard();
+
+setInterval(
+  refreshDashboard,
+  5000
+);
+
+</script>
+
+</body>
+</html>
